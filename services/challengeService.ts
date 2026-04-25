@@ -5,18 +5,14 @@ import { challengesData } from "@/lib/challenges-data"
 
 class ChallengeService {
   private api: AxiosInstance
-  private fallbackData: Challenge[] = challengesData
 
   constructor() {
     this.api = axios.create({
       baseURL: BASE_URL,
-      timeout: 5000, // 5 second timeout
-      headers: {
-        "Content-Type": "application/json",
-      },
+      timeout: 8000,
+      headers: { "Content-Type": "application/json" },
     })
 
-    // Add response interceptor for better error handling
     this.api.interceptors.response.use(
       (response) => response,
       (error: AxiosError) => {
@@ -28,88 +24,36 @@ class ChallengeService {
 
   public async fetchChallenges(): Promise<Challenge[]> {
     try {
-      // Always return local data for now to avoid network issues
-      console.log("Using local challenges data for reliable experience")
-      return this.fallbackData
-    } catch (error) {
-      console.error("Unexpected error in fetchChallenges:", error)
-      return this.fallbackData
+      const response = await this.api.get<Challenge[]>("/challenges")
+      return response.data
+    } catch {
+      return challengesData
     }
   }
 
   public async fetchSingleChallenge(challengeId: string): Promise<Challenge | null> {
     try {
-      console.log(`Fetching challenge with ID: ${challengeId}`)
-
-      // Convert string ID to number for comparison with local data
-      const numericId = Number.parseInt(challengeId, 10)
-
-      // Always use local data first to avoid network issues
-      const localChallenge = this.fallbackData.find((challenge) => {
-        // Handle both string and number ID comparisons
-        return challenge.id === numericId || challenge.id === challengeId || challenge.id.toString() === challengeId
-      })
-
-      if (localChallenge) {
-        console.log(`Found challenge locally:`, localChallenge.title)
-        return localChallenge
-      }
-
-      console.warn(`Challenge with ID ${challengeId} not found in local data`)
-      return null
-    } catch (error) {
-      console.error(`Failed to fetch challenge with ID ${challengeId}:`, error)
-
-      // Fallback: try to find in local data even if there's an error
-      const numericId = Number.parseInt(challengeId, 10)
-      const fallbackChallenge = this.fallbackData.find(
-        (challenge) => challenge.id === numericId || challenge.id.toString() === challengeId,
-      )
-
-      return fallbackChallenge || null
-    }
-  }
-
-  // Method to check API health
-  public async checkApiHealth(): Promise<boolean> {
-    try {
-      await this.api.get("/health", { timeout: 2000 })
-      return true
+      const response = await this.api.get<Challenge>(`/challenges/${challengeId}`)
+      return response.data
     } catch {
-      return false
+      const numericId = Number.parseInt(challengeId, 10)
+      return challengesData.find(
+        (c) => c.id === numericId || c.id.toString() === challengeId
+      ) ?? null
     }
   }
 
-  // Method to get all available challenge IDs
   public getAvailableChallengeIds(): string[] {
-    return this.fallbackData.map((challenge) => challenge.id.toString())
+    return challengesData.map((c) => c.id.toString())
   }
 
-  // REST API integration for /challenges endpoints
-  public createChallenge(data: any) {
-    return this.api.post("/challenges", data)
-  }
-
-  public getAllChallenges() {
-    return this.api.get("/challenges")
-  }
-
-  public getChallengeById(id: string) {
-    return this.api.get(`/challenges/${id}`)
-  }
-
-  public updateChallenge(id: string, data: any) {
-    return this.api.patch(`/challenges/${id}`, data)
-  }
-
-  public deleteChallenge(id: string) {
-    return this.api.delete(`/challenges/${id}`)
-  }
+  public createChallenge(data: any) { return this.api.post("/challenges", data) }
+  public getAllChallenges() { return this.api.get("/challenges") }
+  public getChallengeById(id: string) { return this.api.get(`/challenges/${id}`) }
+  public updateChallenge(id: string, data: any) { return this.api.patch(`/challenges/${id}`, data) }
+  public deleteChallenge(id: string) { return this.api.delete(`/challenges/${id}`) }
 }
 
-// Create and export the service instance
 const challengeService = new ChallengeService()
-
-// Export both named and default exports for flexibility
 export { ChallengeService, challengeService }
 export default challengeService

@@ -13,40 +13,12 @@ import { useEffect, useState } from "react"
 import dashboardService from "@/services/dashboardService"
 import useUIStore from "@/store/useUIStore"
 import type { Challenge } from "@/types/challenges"
+import { useWallet } from "@/hooks/use-wallet"
 
-interface BadgeType {
-  id: string
-  name: string
-  description: string
-  earnedAt: string
-}
-
-interface Submission {
-  id: string
-  challengeId: string
-  status: string
-  submittedAt: string
-}
-
-interface UserData {
-  id: string
-  walletAddress: string
-  username: string
-  email: string
-  profileImage: string
-  bio: string
-  skillCategories: string[]
-  totalEarnings: string
-  reputation: number
-  createdAt: string
-  updatedAt: string
-  badges: BadgeType[]
-  submissions: Submission[]
-  createdChallenges: Challenge[]
-}
+import type { UserData } from "@/services/dashboardService"
 
 const formatCurrency = (amount: string) => {
-  return `${Number.parseFloat(amount).toFixed(2)} ADA`
+  return `${Number.parseFloat(amount).toFixed(4)} ETH`
 }
 
 const formatDate = (dateString: string) => {
@@ -107,37 +79,25 @@ const getDifficultyVariant = (difficulty: string) => {
 export default function DashboardPage() {
   const [userData, setUserData] = useState<UserData | null>(null)
   const { loading, setLoading, setError, error } = useUIStore()
-
-  const userId = "27c9db93-a9eb-452c-a9a6-e045da5b24f6"
+  const { address } = useWallet()
 
   useEffect(() => {
+    if (!address) return
     const loadUserData = async () => {
       setLoading(true)
       setError(null)
       try {
-        console.log("Loading user data...")
-        const data = await dashboardService.fetchUserData(userId)
-        console.log("User data loaded successfully:", data)
+        const data = await dashboardService.fetchUserByWallet(address)
         setUserData(data)
       } catch (err) {
         console.error("Error loading user data:", err)
         setError("Failed to load user data")
-
-        // Fallback to mock data even if service fails
-        try {
-          const mockData = dashboardService.getMockUserData()
-          setUserData(mockData)
-          console.log("Using fallback mock data")
-        } catch (fallbackErr) {
-          console.error("Fallback also failed:", fallbackErr)
-        }
       } finally {
         setLoading(false)
       }
     }
-
     loadUserData()
-  }, [setLoading, setError])
+  }, [address, setLoading, setError])
 
   if (loading) {
     return (

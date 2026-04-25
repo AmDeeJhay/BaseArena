@@ -13,8 +13,8 @@ export default function HowItWorksPage() {
       icon: <Wallet className="h-8 w-8" />,
       title: "Connect Your Wallet",
       description:
-        "Connect your Cardano wallet to get started. Your wallet serves as your identity and portfolio on SkillMint.",
-      details: ["Supports all major Cardano wallets", "Secure blockchain authentication", "No personal data required"],
+        "Connect your Base-compatible wallet to get started. Your wallet serves as your identity and portfolio on BaseSkill.",
+      details: ["Supports MetaMask and Coinbase Wallet", "Secure blockchain authentication", "No personal data required"],
     },
     {
       icon: <Code className="h-8 w-8" />,
@@ -34,8 +34,8 @@ export default function HowItWorksPage() {
       icon: <Trophy className="h-8 w-8" />,
       title: "Get Verified & Rewarded",
       description:
-        "Your submission is reviewed by the community. Successful submissions earn ADA rewards and skill NFTs.",
-      details: ["Community-driven verification", "Instant ADA rewards", "Permanent skill certificates"],
+        "Your submission is reviewed by the community. Successful submissions earn ETH rewards and skill NFTs.",
+      details: ["Community-driven verification", "Instant ETH rewards", "Permanent skill certificates"],
     },
   ]
 
@@ -52,7 +52,7 @@ export default function HowItWorksPage() {
           >
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
-                How SkillMint Works
+                How BaseSkill Works
               </h1>
               <p className="max-w-[900px] text-gray-500 dark:text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 Learn how to prove your skills, earn rewards, and build your on-chain reputation in four simple steps.
@@ -122,9 +122,9 @@ export default function HowItWorksPage() {
         <div className="container px-4 md:px-6 mx-auto">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Why Choose SkillMint?</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Why Choose BaseSkill?</h2>
               <p className="max-w-[900px] text-gray-500 dark:text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                SkillMint offers unique advantages for skill verification and career development.
+                BaseSkill offers unique advantages for skill verification and career development.
               </p>
             </div>
           </div>
@@ -155,7 +155,7 @@ export default function HowItWorksPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-500 dark:text-gray-400">
-                    Earn actual ADA cryptocurrency for completing challenges. Your skills have real monetary value.
+                    Earn actual ETH on Base for completing challenges. Your skills have real monetary value.
                   </p>
                 </CardContent>
               </Card>
@@ -186,7 +186,7 @@ export default function HowItWorksPage() {
             <div className="space-y-2">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Ready to Get Started?</h2>
               <p className="max-w-[600px] text-gray-500 dark:text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Join SkillMint today and start proving your skills on the blockchain.
+                Join BaseSkill today and start proving your skills on the blockchain.
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row">

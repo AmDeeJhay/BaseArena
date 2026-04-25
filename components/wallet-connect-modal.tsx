@@ -1,36 +1,35 @@
 "use client"
 
-import { useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { useWallet } from "@/hooks/use-wallet"
 import { motion } from "framer-motion"
 import { Loader2 } from "lucide-react"
+import { useState } from "react"
+
+const MetaMaskIcon = () => (
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask" className="w-6 h-6 object-contain" />
+)
+
+const CoinbaseIcon = () => (
+  <svg viewBox="0 0 1024 1024" className="w-6 h-6" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1024" height="1024" rx="200" fill="#0052FF" />
+    <path d="M512 692C395 692 300 597 300 480C300 363 395 268 512 268C616 268 703 341 724 440H932C908 228 720 68 512 68C292 68 112 248 112 468C112 688 292 868 512 868C720 868 908 708 932 496H724C703 595 616 692 512 692Z" fill="white" />
+  </svg>
+)
 
 const wallets = [
   {
-    id: "nami",
-    name: "Nami",
-    icon: "/placeholder.svg?height=40&width=40",
-    description: "Browser extension wallet for Cardano",
+    id: "metamask",
+    name: "MetaMask",
+    Icon: MetaMaskIcon,
+    description: "Connect using MetaMask browser extension",
   },
   {
-    id: "eternl",
-    name: "Eternl",
-    icon: "/placeholder.svg?height=40&width=40",
-    description: "Feature-rich wallet for Cardano",
-  },
-  {
-    id: "flint",
-    name: "Flint",
-    icon: "/placeholder.svg?height=40&width=40",
-    description: "Simple and secure Cardano wallet",
-  },
-  {
-    id: "yoroi",
-    name: "Yoroi",
-    icon: "/placeholder.svg?height=40&width=40",
-    description: "Light wallet for Cardano",
+    id: "coinbase",
+    name: "Coinbase Wallet",
+    Icon: CoinbaseIcon,
+    description: "Connect using Coinbase Wallet",
   },
 ]
 
@@ -40,13 +39,12 @@ export function WalletConnectModal({ open, onOpenChange }: { open: boolean; onOp
 
   const handleConnect = async (walletId: string) => {
     setConnecting(walletId)
-
-    // Simulate connection delay
-    setTimeout(() => {
-      connect()
-      setConnecting(null)
+    try {
+      await connect(walletId)
       onOpenChange(false)
-    }, 1500)
+    } finally {
+      setConnecting(null)
+    }
   }
 
   return (
@@ -55,7 +53,7 @@ export function WalletConnectModal({ open, onOpenChange }: { open: boolean; onOp
         <DialogHeader>
           <DialogTitle>Connect Wallet</DialogTitle>
           <DialogDescription>
-            Connect your Cardano wallet to access challenges, earn rewards, and build your on-chain skill portfolio.
+            Connect your wallet to access challenges, earn rewards, and build your on-chain skill portfolio on Base.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -69,7 +67,7 @@ export function WalletConnectModal({ open, onOpenChange }: { open: boolean; onOp
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
-                    <img src={wallet.icon || "/placeholder.svg"} alt={wallet.name} className="w-6 h-6" />
+                    <wallet.Icon />
                   </div>
                   <div className="flex flex-col items-start">
                     <span className="font-medium">{wallet.name}</span>

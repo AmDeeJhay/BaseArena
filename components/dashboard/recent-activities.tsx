@@ -10,7 +10,7 @@ export default function RecentActivities() {
     {
       id: 1,
       type: "submission",
-      title: "Submitted solution for 'Implement a Cardano Wallet Connector'",
+      title: "Submitted solution for 'Implement a Base Wallet Connector'",
       time: "2 hours ago",
       icon: <Code className="h-4 w-4 text-blue-600 dark:text-blue-400" />,
       status: "Pending",

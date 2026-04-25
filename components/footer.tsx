@@ -6,24 +6,12 @@ export default function Footer() {
       <div className="container flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
           <Link href="/" className="flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-5 w-5 text-teal-600 dark:text-teal-400"
-            >
-              <path d="M12 2L5 12l7 10 7-10z" />
-              <path d="M5 12l7-10 7 10" />
-              <path d="M5 12l7 10 7-10" />
-              <path d="M5 12h14" />
+            <svg width="22" height="17" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <polyline points="9,4 3,12 9,20" stroke="#0d9488" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              <polyline points="23,4 29,12 23,20" stroke="#0d9488" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              <rect x="12" y="8" width="8" height="8" rx="1.5" fill="#0d9488" />
             </svg>
-            <span className="font-semibold">SkillMint</span>
+            <span className="font-semibold">BaseSkill</span>
           </Link>
           <nav className="flex flex-wrap gap-4 md:gap-6">
             <Link
@@ -110,7 +98,7 @@ export default function Footer() {
       </div>
       <div className="container mt-4 md:mt-6 mx-auto px-4">
         <p className="text-xs text-center text-gray-500 dark:text-gray-400">
-          &copy; {new Date().getFullYear()} SkillMint. All rights reserved. Built on Cardano.
+          &copy; {new Date().getFullYear()} BaseSkill. All rights reserved. Built on Base.
         </p>
       </div>
     </footer>

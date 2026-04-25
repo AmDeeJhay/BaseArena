@@ -47,7 +47,7 @@ export default function ProfilePage() {
       id: 1,
       title: "Build a DEX Order Book",
       category: "Development",
-      reward: "250 ADA",
+      reward: "0.05 ETH",
       completedAt: "2024-01-15",
       status: "Verified",
       rating: 5,
@@ -56,7 +56,7 @@ export default function ProfilePage() {
       id: 2,
       title: "Design a Mobile Wallet UI",
       category: "Design",
-      reward: "150 ADA",
+      reward: "0.03 ETH",
       completedAt: "2024-01-10",
       status: "Verified",
       rating: 4,
@@ -65,7 +65,7 @@ export default function ProfilePage() {
       id: 3,
       title: "Smart Contract Security Audit",
       category: "Security",
-      reward: "300 ADA",
+      reward: "0.06 ETH",
       completedAt: "2024-01-05",
       status: "Verified",
       rating: 5,
@@ -78,7 +78,7 @@ export default function ProfilePage() {
     { name: "UI/UX Design", level: "Intermediate", color: "bg-green-100 text-green-800" },
     { name: "Blockchain Security", level: "Advanced", color: "bg-red-100 text-red-800" },
     { name: "TypeScript", level: "Expert", color: "bg-indigo-100 text-indigo-800" },
-    { name: "Cardano", level: "Advanced", color: "bg-teal-100 text-teal-800" },
+    { name: "Base", level: "Advanced", color: "bg-teal-100 text-teal-800" },
   ]
 
   const nftBadges = [
@@ -168,7 +168,7 @@ export default function ProfilePage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Earnings</p>
-                      <p className="text-2xl font-bold">{userStats.totalEarnings} ADA</p>
+                      <p className="text-2xl font-bold">{userStats.totalEarnings} ETH</p>
                     </div>
                     <Zap className="h-8 w-8 text-yellow-500" />
                   </div>
@@ -344,7 +344,7 @@ export default function ProfilePage() {
                       <div className="w-2 h-2 rounded-full bg-green-500 mt-2"></div>
                       <div>
                         <p className="font-medium">Completed "Build a DEX Order Book" challenge</p>
-                        <p className="text-sm text-gray-500">Earned 250 ADA • 2 days ago</p>
+                        <p className="text-sm text-gray-500">Earned 0.05 ETH • 2 days ago</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">

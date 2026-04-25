@@ -72,7 +72,7 @@ export default function LeaderboardPage() {
   }
 
   const formatCurrency = (amount: string) => {
-    return `${Number.parseFloat(amount).toFixed(2)} ADA`
+    return `${Number.parseFloat(amount).toFixed(4)} ETH`
   }
 
   const formatDate = (dateString: string) => {
@@ -106,7 +106,7 @@ export default function LeaderboardPage() {
         <div className="space-y-2">
           <h1 className="text-2xl md:text-3xl font-bold">Leaderboard</h1>
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            See how you rank against other developers in the SkillMint community.
+            See how you rank against other developers in the BaseSkill community.
           </p>
         </div>
 

@@ -37,8 +37,8 @@ export default function Home() {
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
                 Prove Your Skills, <span className="text-teal-600 dark:text-teal-400">Earn Rewards</span>
               </h1>
-              <p className="text-gray-500 dark:text-gray-400 text-lg md:text-xl max-w-2xl">
-                SkillMint is an open platform on the Cardano blockchain where builders, developers, creatives, and
+      <p className="text-gray-500 dark:text-gray-400 text-lg md:text-xl max-w-2xl">
+                BaseSkill is an open platform on the Base blockchain where builders, developers, creatives, and
                 learners prove their skills by completing challenges and earn on-chain rewards.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row">
@@ -75,12 +75,12 @@ export default function Home() {
                       </div>
                       <div className="flex items-center space-x-1">
                         <Zap className="h-4 w-4 text-yellow-500" />
-                        <span className="text-sm font-medium">250 ADA</span>
+                        <span className="text-sm font-medium">0.05 ETH</span>
                       </div>
                     </div>
-                    <h2 className="text-lg font-semibold mb-2">Build a DEX Order Book on Cardano</h2>
+                    <h2 className="text-lg font-semibold mb-2">Build a DEX Order Book on Base</h2>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                      Create a decentralized exchange order book using Plutus smart contracts. Implement limit orders
+                      Create a decentralized exchange order book using Solidity smart contracts. Implement limit orders
                       and market orders.
                     </p>
                     <div className="flex items-center justify-between">
@@ -116,9 +116,9 @@ export default function Home() {
         <div className="container px-6 md:px-8 mx-auto max-w-7xl">
           <div className="flex flex-col items-center justify-center space-y-6 text-center">
             <div className="space-y-4">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Why SkillMint?</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Why BaseSkill?</h2>
               <p className="max-w-4xl text-gray-500 dark:text-gray-400 text-lg md:text-xl">
-                SkillMint removes traditional barriers to opportunity and creates a new way to build your reputation.
+                BaseSkill removes traditional barriers to opportunity and creates a new way to build your reputation.
               </p>
             </div>
           </div>
@@ -212,7 +212,7 @@ export default function Home() {
                 Ready to Prove Your Skills?
               </h2>
               <p className="max-w-3xl text-gray-500 dark:text-gray-400 text-lg md:text-xl">
-                Join SkillMint today and start building your on-chain skill portfolio.
+                Join BaseSkill today and start building your on-chain skill portfolio.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">

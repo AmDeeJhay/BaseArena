@@ -10,9 +10,9 @@ import GlobalLoading from "@/components/globalLoading";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "SkillMint - Decentralized Skill Verification Platform",
+  title: "BaseSkill - Decentralized Skill Verification on Base",
   description:
-    "SkillMint is a decentralized platform on the Cardano blockchain where users can prove their skills by completing challenges and earn NFT badges.",
+    "BaseSkill is a decentralized platform on the Base blockchain where users can prove their skills by completing challenges and earn NFT badges.",
   generator: "v0.dev",
 };
 

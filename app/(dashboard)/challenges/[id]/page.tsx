@@ -176,19 +176,19 @@ export default function ChallengePage() {
   ]
 
   const requirements = [
-    "Implement order book functionality using Plutus smart contracts",
+    "Implement order book functionality using Solidity smart contracts",
     "Support both limit and market orders",
     "Include proper error handling and validation",
     "Provide comprehensive documentation",
-    "Deploy to Cardano testnet",
+    "Deploy to Base testnet",
     "Include unit tests with >80% coverage",
   ]
 
   const resources = [
-    { title: "Plutus Documentation", url: "#", type: "docs" },
+    { title: "Solidity Documentation", url: "#", type: "docs" },
     { title: "DEX Architecture Guide", url: "#", type: "guide" },
     { title: "Sample Code Repository", url: "#", type: "code" },
-    { title: "Cardano Testnet Faucet", url: "#", type: "tool" },
+    { title: "Base Testnet Faucet", url: "#", type: "tool" },
   ]
 
   return (
@@ -221,7 +221,7 @@ export default function ChallengePage() {
                       <Badge variant="secondary">{challenge.difficulty}</Badge>
                       <div className="flex items-center text-yellow-500 gap-1">
                         <Zap className="h-4 w-4" />
-                        <span className="font-medium">{challenge.reward} ADA</span>
+                        <span className="font-medium">{challenge.reward} ETH</span>
                       </div>
                       <div className="flex items-center text-gray-500 dark:text-gray-400 gap-1">
                         <Users className="h-4 w-4" />
@@ -254,7 +254,7 @@ export default function ChallengePage() {
                     <Award className="h-4 w-4 text-gray-500" />
                     <div>
                       <div className="text-sm font-medium">Reward</div>
-                      <div className="text-sm text-gray-500">{challenge.reward} ADA</div>
+                      <div className="text-sm text-gray-500">{challenge.reward} ETH</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -426,7 +426,7 @@ export default function ChallengePage() {
                     <AvatarFallback>SM</AvatarFallback>
                   </Avatar>
                   <div>
-                    <div className="font-medium">SkillMint Team</div>
+                    <div className="font-medium">BaseSkill Team</div>
                     <div className="text-sm text-gray-500">Official Challenge</div>
                   </div>
                 </div>
@@ -440,7 +440,7 @@ export default function ChallengePage() {
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Total Reward</span>
-                  <span className="font-medium">{challenge.reward} ADA</span>
+                  <span className="font-medium">{challenge.reward} ETH</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Submissions</span>

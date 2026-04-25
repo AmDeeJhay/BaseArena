@@ -60,32 +60,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <Sidebar className="hidden md:flex w-64 flex-shrink-0 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-r border-gray-200/50 dark:border-gray-700/50 shadow-xl">
           <SidebarHeader className="px-6 py-6 border-b border-gray-200/50 dark:border-gray-700/50">
             <Link href="/" className="flex items-center gap-3 group">
-              <motion.div 
-                className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 dark:from-teal-600 dark:to-teal-700 flex-shrink-0 shadow-lg"
-                whileHover={{ scale: 1.05, rotate: 5 }}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-6 w-6 text-white"
-                >
-                  <path d="M12 2L5 12l7 10 7-10z" />
-                  <path d="M5 12l7-10 7 10" />
-                  <path d="M5 12l7 10 7-10" />
-                  <path d="M5 12h14" />
+                <svg width="40" height="30" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <polyline points="9,4 3,12 9,20" stroke="#0d9488" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                  <polyline points="23,4 29,12 23,20" stroke="#0d9488" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                  <rect x="12" y="8" width="8" height="8" rx="1.5" fill="#0d9488" />
                 </svg>
               </motion.div>
-              <div className="font-bold text-xl bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-teal-500 transition-all duration-300">
-                SkillMint
+              <div className="font-bold text-xl group-hover:opacity-80 transition-opacity duration-300">
+                BaseSkill
               </div>
             </Link>
           </SidebarHeader>
@@ -270,7 +257,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         >
                           <Zap className="h-3 w-3 mr-1 text-yellow-500 flex-shrink-0" />
                         </motion.div>
-                        <span className="truncate font-medium">500 ADA earned</span>
+                      <span className="truncate font-medium">Earnings</span>
                       </div>
                     </div>
                   </div>
