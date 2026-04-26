@@ -10,9 +10,9 @@ import GlobalLoading from "@/components/globalLoading";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "BaseSkill - Decentralized Skill Verification on Base",
+  title: "BaseArena - Decentralized Skill Verification on Base",
   description:
-    "BaseSkill is a decentralized platform on the Base blockchain where users can prove their skills by completing challenges and earn NFT badges.",
+    "BaseArena is a decentralized platform on the Base blockchain where users can prove their skills by completing challenges and earn NFT badges.",
   generator: "v0.dev",
 };
 

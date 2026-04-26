@@ -32,7 +32,7 @@ export default function HowItWorks() {
           <div className="space-y-2">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">How It Works</h2>
             <p className="max-w-[900px] text-gray-500 dark:text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              BaseSkill makes it easy to prove your skills and earn rewards on the Base blockchain.
+              BaseArena makes it easy to prove your skills and earn rewards on the Base blockchain.
             </p>
           </div>
         </div>

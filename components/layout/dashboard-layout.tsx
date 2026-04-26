@@ -72,7 +72,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </svg>
               </motion.div>
               <div className="font-bold text-xl group-hover:opacity-80 transition-opacity duration-300">
-                BaseSkill
+                BaseArena
               </div>
             </Link>
           </SidebarHeader>

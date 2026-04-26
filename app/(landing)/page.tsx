@@ -38,7 +38,7 @@ export default function Home() {
                 Prove Your Skills, <span className="text-teal-600 dark:text-teal-400">Earn Rewards</span>
               </h1>
       <p className="text-gray-500 dark:text-gray-400 text-lg md:text-xl max-w-2xl">
-                BaseSkill is an open platform on the Base blockchain where builders, developers, creatives, and
+                BaseArena is an open platform on the Base blockchain where builders, developers, creatives, and
                 learners prove their skills by completing challenges and earn on-chain rewards.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row">
@@ -116,9 +116,9 @@ export default function Home() {
         <div className="container px-6 md:px-8 mx-auto max-w-7xl">
           <div className="flex flex-col items-center justify-center space-y-6 text-center">
             <div className="space-y-4">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Why BaseSkill?</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Why BaseArena?</h2>
               <p className="max-w-4xl text-gray-500 dark:text-gray-400 text-lg md:text-xl">
-                BaseSkill removes traditional barriers to opportunity and creates a new way to build your reputation.
+                BaseArena removes traditional barriers to opportunity and creates a new way to build your reputation.
               </p>
             </div>
           </div>
@@ -212,7 +212,7 @@ export default function Home() {
                 Ready to Prove Your Skills?
               </h2>
               <p className="max-w-3xl text-gray-500 dark:text-gray-400 text-lg md:text-xl">
-                Join BaseSkill today and start building your on-chain skill portfolio.
+                Join BaseArena today and start building your on-chain skill portfolio.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">

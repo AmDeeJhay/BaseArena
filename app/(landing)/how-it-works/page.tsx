@@ -13,7 +13,7 @@ export default function HowItWorksPage() {
       icon: <Wallet className="h-8 w-8" />,
       title: "Connect Your Wallet",
       description:
-        "Connect your Base-compatible wallet to get started. Your wallet serves as your identity and portfolio on BaseSkill.",
+        "Connect your Base-compatible wallet to get started. Your wallet serves as your identity and portfolio on BaseArena.",
       details: ["Supports MetaMask and Coinbase Wallet", "Secure blockchain authentication", "No personal data required"],
     },
     {
@@ -52,7 +52,7 @@ export default function HowItWorksPage() {
           >
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
-                How BaseSkill Works
+                How BaseArena Works
               </h1>
               <p className="max-w-[900px] text-gray-500 dark:text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 Learn how to prove your skills, earn rewards, and build your on-chain reputation in four simple steps.
@@ -122,9 +122,9 @@ export default function HowItWorksPage() {
         <div className="container px-4 md:px-6 mx-auto">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Why Choose BaseSkill?</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Why Choose BaseArena?</h2>
               <p className="max-w-[900px] text-gray-500 dark:text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                BaseSkill offers unique advantages for skill verification and career development.
+                BaseArena offers unique advantages for skill verification and career development.
               </p>
             </div>
           </div>
@@ -186,7 +186,7 @@ export default function HowItWorksPage() {
             <div className="space-y-2">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Ready to Get Started?</h2>
               <p className="max-w-[600px] text-gray-500 dark:text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Join BaseSkill today and start proving your skills on the blockchain.
+                Join BaseArena today and start proving your skills on the blockchain.
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row">

@@ -11,7 +11,7 @@ export default function Footer() {
               <polyline points="23,4 29,12 23,20" stroke="#0d9488" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
               <rect x="12" y="8" width="8" height="8" rx="1.5" fill="#0d9488" />
             </svg>
-            <span className="font-semibold">BaseSkill</span>
+            <span className="font-semibold">BaseArena</span>
           </Link>
           <nav className="flex flex-wrap gap-4 md:gap-6">
             <Link
@@ -98,7 +98,7 @@ export default function Footer() {
       </div>
       <div className="container mt-4 md:mt-6 mx-auto px-4">
         <p className="text-xs text-center text-gray-500 dark:text-gray-400">
-          &copy; {new Date().getFullYear()} BaseSkill. All rights reserved. Built on Base.
+          &copy; {new Date().getFullYear()} BaseArena. All rights reserved. Built on Base.
         </p>
       </div>
     </footer>

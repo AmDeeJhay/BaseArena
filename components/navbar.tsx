@@ -18,7 +18,7 @@ const navLinks = [
   { href: "/about", label: "About" },
 ]
 
-function BaseSkillLogo({ size = 30 }: { size?: number }) {
+function BaseArenaLogo({ size = 30 }: { size?: number }) {
   // viewBox: 32 wide, 24 tall
   // < at left, > at right, ■ perfectly centered between them
   return (
@@ -53,9 +53,9 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
           <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.2 }}>
-            <BaseSkillLogo />
+            <BaseArenaLogo />
           </motion.div>
-          <span className="font-bold text-xl tracking-tight">BaseSkill</span>
+          <span className="font-bold text-xl tracking-tight">BaseArena</span>
         </Link>
 
         {/* Desktop Nav */}

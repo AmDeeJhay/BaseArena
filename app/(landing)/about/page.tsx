@@ -65,7 +65,7 @@ export default function AboutPage() {
           >
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
-                About BaseSkill
+                About BaseArena
               </h1>
               <p className="max-w-[900px] text-gray-500 dark:text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 We're building the future of skill verification and career development on the blockchain.
@@ -87,7 +87,7 @@ export default function AboutPage() {
             >
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Our Mission</h2>
               <p className="text-gray-500 dark:text-gray-400 text-lg">
-                BaseSkill democratizes opportunity by creating a transparent, merit-based platform where anyone can
+                BaseArena democratizes opportunity by creating a transparent, merit-based platform where anyone can
                 prove their skills and get rewarded for their expertise.
               </p>
               <p className="text-gray-500 dark:text-gray-400">
@@ -142,7 +142,7 @@ export default function AboutPage() {
           <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Our Impact</h2>
             <p className="max-w-[900px] text-gray-500 dark:text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              See how BaseSkill is transforming the way people prove and monetize their skills.
+              See how BaseArena is transforming the way people prove and monetize their skills.
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
