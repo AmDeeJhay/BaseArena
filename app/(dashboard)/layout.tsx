@@ -32,7 +32,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <DashboardLayout>
-        <div className="pb-20 md:pb-0">{children}</div>
+        <div className="h-full pb-20 md:pb-0">{children}</div>
       </DashboardLayout>
       <MobileBottomNav />
       <WalletConnectModal open={isWalletModalOpen} onOpenChange={setIsWalletModalOpen} />

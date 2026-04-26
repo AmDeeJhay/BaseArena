@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import {
   PenSquare, Users, Zap, Trophy, Loader2, TrendingUp,
-  Swords, ImagePlus, Link2, BarChart2, ShieldCheck
+  Swords, ImagePlus, Link2, BarChart2, ShieldCheck, Gamepad2
 } from "lucide-react"
 import { motion } from "framer-motion"
 import { useWallet } from "@/hooks/use-wallet"
@@ -26,6 +26,9 @@ const WHO_TO_FOLLOW = [
   { username: "Web3Dev",       address: "0xabc1...bc1",  avatar: "/placeholder.svg" },
   { username: "UIWizard",      address: "0xdead...beef", avatar: "/placeholder.svg" },
 ]
+
+// Top bar height in px — used to offset sticky positions
+const TOP_BAR_H = 56 // h-14 = 56px
 
 export default function ArenaPage() {
   const { address, isConnected } = useWallet()
@@ -62,23 +65,24 @@ export default function ArenaPage() {
   const shortAddr = (a: string) => `${a.slice(0, 6)}...${a.slice(-4)}`
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      {/* Top bar */}
-      <div className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur border-b border-gray-200 dark:border-gray-800">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+    // Full viewport height, no page-level scroll
+    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-950 overflow-hidden">
+
+      {/* ── Fixed top bar ── */}
+      <div className="flex-shrink-0 z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur border-b border-gray-200 dark:border-gray-800">
+        <div className="max-w-full px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Swords className="h-5 w-5 text-teal-600" />
             <span className="font-bold text-lg">BaseArena</span>
             <Badge variant="outline" className="text-xs ml-1 hidden sm:flex">Social Feed</Badge>
           </div>
           <div className="flex items-center gap-2">
-            {/* Feed filter pills */}
             <div className="hidden sm:flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-full p-1">
               {(["all", "achievement", "earning"] as Filter[]).map(f => (
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors capitalize ${
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                     filter === f
                       ? "bg-white dark:bg-gray-700 shadow text-teal-600 dark:text-teal-400"
                       : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
@@ -98,14 +102,15 @@ export default function ArenaPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* ── Body: three columns, fills remaining height ── */}
+      <div className="flex-1 flex overflow-hidden">
+        <div className="w-full max-w-6xl mx-auto px-4 flex gap-6 overflow-hidden">
 
-          {/* ── Left sidebar ── */}
-          <aside className="hidden lg:block lg:col-span-3 space-y-4">
+          {/* ── Left sidebar — sticky, scrolls its own content, stops at bottom ── */}
+          <aside className="hidden lg:flex flex-col w-72 flex-shrink-0 py-6 overflow-y-auto scrollbar-none">
             {/* Profile card */}
             {isConnected && (
-              <Card>
+              <Card className="mb-4">
                 <CardContent className="p-4">
                   <div className="flex flex-col items-center text-center gap-2">
                     <Avatar className="h-14 w-14 ring-2 ring-teal-500/30">
@@ -122,7 +127,10 @@ export default function ArenaPage() {
                     </div>
                     <Separator />
                     <div className="w-full grid grid-cols-3 gap-2 text-center">
-                      <div><p className="font-bold text-sm">{posts.filter(p => p.authorAddress.toLowerCase() === address?.toLowerCase()).length}</p><p className="text-xs text-gray-500">Posts</p></div>
+                      <div>
+                        <p className="font-bold text-sm">{posts.filter(p => p.authorAddress.toLowerCase() === address?.toLowerCase()).length}</p>
+                        <p className="text-xs text-gray-500">Posts</p>
+                      </div>
                       <div><p className="font-bold text-sm">—</p><p className="text-xs text-gray-500">Following</p></div>
                       <div><p className="font-bold text-sm">—</p><p className="text-xs text-gray-500">Followers</p></div>
                     </div>
@@ -132,7 +140,7 @@ export default function ArenaPage() {
             )}
 
             {/* Navigation */}
-            <Card>
+            <Card className="mb-4">
               <CardContent className="p-3 space-y-1">
                 {[
                   { icon: <Users className="h-4 w-4" />, label: "Feed", active: filter === "all", onClick: () => setFilter("all") },
@@ -154,14 +162,36 @@ export default function ArenaPage() {
                 ))}
               </CardContent>
             </Card>
+
+            {/* Games — Coming Soon */}
+            <Card className="border-dashed border-2 border-gray-200 dark:border-gray-700">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Gamepad2 className="h-4 w-4 text-teal-600" />
+                  <p className="font-semibold text-sm">Arena Games</p>
+                  <Badge className="text-xs bg-teal-600 text-white ml-auto">Soon</Badge>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                  Compete in skill-based games, earn rewards, and climb the Arena leaderboard.
+                </p>
+                <div className="mt-3 space-y-2">
+                  {["Trivia Blitz", "Code Duel", "Design Sprint"].map(game => (
+                    <div key={game} className="flex items-center justify-between py-1.5 px-2 rounded-lg bg-gray-50 dark:bg-gray-800">
+                      <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{game}</span>
+                      <Badge variant="outline" className="text-xs">Coming Soon</Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </aside>
 
-          {/* ── Main feed ── */}
-          <main className="lg:col-span-6 space-y-4">
+          {/* ── Main feed — ONLY this scrolls ── */}
+          <main className="flex-1 min-w-0 py-6 overflow-y-auto scrollbar-none">
 
             {/* Compose box */}
             {isConnected && (
-              <Card>
+              <Card className="mb-4">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
                     <Avatar className="h-9 w-9 flex-shrink-0">
@@ -179,30 +209,28 @@ export default function ArenaPage() {
                   </div>
                   <Separator className="my-3" />
                   <div className="flex items-center justify-around">
-                    <button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2 text-xs text-gray-500 hover:text-teal-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20">
-                      <Trophy className="h-4 w-4 text-purple-500" />Achievement
-                    </button>
-                    <button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2 text-xs text-gray-500 hover:text-teal-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20">
-                      <Zap className="h-4 w-4 text-yellow-500" />Earning
-                    </button>
-                    <button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2 text-xs text-gray-500 hover:text-teal-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20">
-                      <Link2 className="h-4 w-4 text-blue-500" />Proof
-                    </button>
-                    <button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2 text-xs text-gray-500 hover:text-teal-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20">
-                      <ImagePlus className="h-4 w-4 text-green-500" />Media
-                    </button>
+                    {[
+                      { icon: <Trophy className="h-4 w-4 text-purple-500" />, label: "Achievement" },
+                      { icon: <Zap className="h-4 w-4 text-yellow-500" />, label: "Earning" },
+                      { icon: <Link2 className="h-4 w-4 text-blue-500" />, label: "Proof" },
+                      { icon: <ImagePlus className="h-4 w-4 text-green-500" />, label: "Media" },
+                    ].map(a => (
+                      <button key={a.label} onClick={() => setShowCreateModal(true)} className="flex items-center gap-2 text-xs text-gray-500 hover:text-teal-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20">
+                        {a.icon}{a.label}
+                      </button>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
             )}
 
             {/* Mobile filter pills */}
-            <div className="flex sm:hidden gap-2 overflow-x-auto pb-1">
+            <div className="flex sm:hidden gap-2 overflow-x-auto pb-1 mb-4 scrollbar-none">
               {(["all", "achievement", "earning"] as Filter[]).map(f => (
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
-                  className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors capitalize ${
+                  className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                     filter === f
                       ? "bg-teal-600 text-white border-teal-600"
                       : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400"
@@ -217,16 +245,18 @@ export default function ArenaPage() {
             {loading ? (
               <div className="space-y-4">
                 {[...Array(3)].map((_, i) => (
-                  <Card key={i}><CardContent className="p-4">
-                    <div className="flex gap-3">
-                      <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse flex-shrink-0" />
-                      <div className="flex-1 space-y-2">
-                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-1/3" />
-                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full" />
-                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-2/3" />
+                  <Card key={i}>
+                    <CardContent className="p-4">
+                      <div className="flex gap-3">
+                        <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse flex-shrink-0" />
+                        <div className="flex-1 space-y-2">
+                          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-1/3" />
+                          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full" />
+                          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-2/3" />
+                        </div>
                       </div>
-                    </div>
-                  </CardContent></Card>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             ) : filtered.length === 0 ? (
@@ -255,7 +285,7 @@ export default function ArenaPage() {
                   </motion.div>
                 ))}
                 {hasMore && (
-                  <div className="flex justify-center pt-2">
+                  <div className="flex justify-center pt-2 pb-6">
                     <Button variant="outline" onClick={() => loadPosts()} disabled={loadingMore}>
                       {loadingMore && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                       Load more
@@ -266,21 +296,21 @@ export default function ArenaPage() {
             )}
           </main>
 
-          {/* ── Right sidebar ── */}
-          <aside className="hidden lg:block lg:col-span-3 space-y-4">
+          {/* ── Right sidebar — sticky, scrolls its own content, stops at bottom ── */}
+          <aside className="hidden lg:flex flex-col w-72 flex-shrink-0 py-6 overflow-y-auto scrollbar-none">
 
-            {/* Stats */}
-            <Card>
+            {/* Arena Stats */}
+            <Card className="mb-4">
               <CardContent className="p-4 space-y-3">
                 <p className="font-semibold text-sm flex items-center gap-2">
                   <BarChart2 className="h-4 w-4 text-teal-600" />Arena Stats
                 </p>
                 <div className="space-y-2">
                   {[
-                    { label: "Total Posts", value: posts.length },
-                    { label: "Achievements", value: posts.filter(p => p.type === "achievement").length },
+                    { label: "Total Posts",     value: posts.length },
+                    { label: "Achievements",    value: posts.filter(p => p.type === "achievement").length },
                     { label: "Earnings Shared", value: posts.filter(p => p.type === "earning").length },
-                    { label: "Total Likes", value: posts.reduce((acc, p) => acc + p.likes.length, 0) },
+                    { label: "Total Likes",     value: posts.reduce((acc, p) => acc + p.likes.length, 0) },
                   ].map(s => (
                     <div key={s.label} className="flex items-center justify-between text-sm">
                       <span className="text-gray-500 dark:text-gray-400">{s.label}</span>
@@ -291,8 +321,8 @@ export default function ArenaPage() {
               </CardContent>
             </Card>
 
-            {/* Trending tags */}
-            <Card>
+            {/* Trending */}
+            <Card className="mb-4">
               <CardContent className="p-4 space-y-3">
                 <p className="font-semibold text-sm flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-teal-600" />Trending
@@ -307,8 +337,8 @@ export default function ArenaPage() {
               </CardContent>
             </Card>
 
-            {/* Who to follow */}
-            <Card>
+            {/* Builders to Follow */}
+            <Card className="mb-4">
               <CardContent className="p-4 space-y-3">
                 <p className="font-semibold text-sm flex items-center gap-2">
                   <Users className="h-4 w-4 text-teal-600" />Builders to Follow
@@ -333,17 +363,18 @@ export default function ArenaPage() {
               </CardContent>
             </Card>
 
-            {/* Proof of ownership explainer */}
+            {/* Proof of ownership */}
             <Card className="bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800">
               <CardContent className="p-4 space-y-2">
                 <p className="font-semibold text-sm flex items-center gap-2 text-teal-700 dark:text-teal-400">
                   <ShieldCheck className="h-4 w-4" />Proof of Ownership
                 </p>
                 <p className="text-xs text-teal-700/80 dark:text-teal-400/80 leading-relaxed">
-                  Every post is signed by your wallet. The <span className="font-mono">🛡</span> badge means the post is cryptographically verified — no one can post as you.
+                  Every post is signed by your wallet. The 🛡 badge means the post is cryptographically verified — no one can post as you.
                 </p>
               </CardContent>
             </Card>
+
           </aside>
 
         </div>

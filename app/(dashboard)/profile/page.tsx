@@ -21,19 +21,36 @@ import {
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
 import { userService } from "@/services/userService"
+import { useWallet } from "@/hooks/use-wallet"
 
 export default function ProfilePage() {
+  const { address } = useWallet()
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Example: Fetch user by ID (replace '1' with actual user ID or logic)
-    userService.getUserById("1")
-      .then(res => setUser(res.data))
-      .catch(err => setError("Failed to load user"))
-      .finally(() => setLoading(false))
-  }, [])
+    if (!address) {
+      setLoading(false)
+      return
+    }
+
+    const fetchUserData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const res = await userService.getUserByWallet(address)
+        setUser(res.data)
+      } catch (err) {
+        setError("Failed to load profile")
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUserData()
+  }, [address])
 
   const userStats = {
     totalEarnings: user?.totalEarnings || "1,250",
@@ -107,7 +124,14 @@ export default function ProfilePage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {loading ? (
+      {!address ? (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">Connect your wallet to view your profile</p>
+            <Button className="bg-teal-600 hover:bg-teal-700">Connect Wallet</Button>
+          </div>
+        </div>
+      ) : loading ? (
         <div>Loading...</div>
       ) : error ? (
         <div className="text-red-500">{error}</div>
