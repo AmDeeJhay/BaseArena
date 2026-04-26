@@ -76,8 +76,8 @@ function NavItem({
             } ${collapsed ? "justify-center" : ""}`}
         >
           <div className={`flex-shrink-0 p-1.5 rounded-lg transition-colors ${isActive
-              ? "bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400"
-              : "text-gray-500 dark:text-gray-400 group-hover:text-teal-600 dark:group-hover:text-teal-400"
+            ? "bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400"
+            : "text-gray-500 dark:text-gray-400 group-hover:text-teal-600 dark:group-hover:text-teal-400"
             }`}>
             <Icon className="h-4 w-4" />
           </div>
