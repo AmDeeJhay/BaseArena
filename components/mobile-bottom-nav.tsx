@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Award, BarChart3, User, ChevronRight, ArrowLeft } from "lucide-react"
+import { Home, Award, BarChart3, User, ChevronRight, ArrowLeft, Swords } from "lucide-react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
@@ -18,6 +18,12 @@ const navItems = [
     icon: Home,
     label: "Dashboard",
     activePattern: "/dashboard",
+  },
+  {
+    href: "/arena",
+    icon: Swords,
+    label: "Arena",
+    activePattern: "/arena",
   },
   {
     href: "/challenges",

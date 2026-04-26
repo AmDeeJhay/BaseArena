@@ -72,6 +72,15 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Prevent horizontal overflow */

@@ -53,9 +53,13 @@ class DashboardService {
     return response.data
   }
 
-  public async fetchUserByWallet(walletAddress: string): Promise<UserData> {
-    const response = await this.api.get<UserData>(`/users/wallet/${walletAddress}`)
-    return response.data
+  public async fetchUserByWallet(walletAddress: string): Promise<UserData | null> {
+    try {
+      const response = await this.api.get<UserData>(`/users/wallet/${walletAddress}`)
+      return response.data
+    } catch {
+      return null
+    }
   }
 
   public async updateUserData(userId: string, updates: Partial<UserData>): Promise<UserData> {

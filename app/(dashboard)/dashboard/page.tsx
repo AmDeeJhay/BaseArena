@@ -17,8 +17,9 @@ import { useWallet } from "@/hooks/use-wallet"
 
 import type { UserData } from "@/services/dashboardService"
 
-const formatCurrency = (amount: string) => {
-  return `${Number.parseFloat(amount).toFixed(4)} ETH`
+const formatCurrency = (amount: string | number) => {
+  const n = typeof amount === "number" ? amount : Number.parseFloat(amount)
+  return isNaN(n) ? "0.0000 ETH" : `${n.toFixed(4)} ETH`
 }
 
 const formatDate = (dateString: string) => {
@@ -86,15 +87,9 @@ export default function DashboardPage() {
     const loadUserData = async () => {
       setLoading(true)
       setError(null)
-      try {
-        const data = await dashboardService.fetchUserByWallet(address)
-        setUserData(data)
-      } catch (err) {
-        console.error("Error loading user data:", err)
-        setError("Failed to load user data")
-      } finally {
-        setLoading(false)
-      }
+      const data = await dashboardService.fetchUserByWallet(address)
+      setUserData(data)
+      setLoading(false)
     }
     loadUserData()
   }, [address, setLoading, setError])
@@ -117,11 +112,48 @@ export default function DashboardPage() {
     )
   }
 
-  if (!loading && (error || !userData)) {
+  if (!loading && !userData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex justify-center">
+        <div className="w-full max-w-7xl px-4 py-8 space-y-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="space-y-2">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">Dashboard</h1>
+              <p className="text-gray-600 dark:text-gray-300 text-lg">Welcome! Connect your wallet or complete your profile to get started.</p>
+            </div>
+            <Link href="/challenges">
+              <Button className="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 shadow-lg px-6 py-3 text-lg">
+                Browse Challenges <ArrowRight className="h-5 w-5 ml-2" />
+              </Button>
+            </Link>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {["Challenges Completed", "Total Earned", "NFT Badges", "Active Challenges"].map((title, i) => (
+              <Card key={i} className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80">
+                <CardContent className="p-6">
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{title}</h3>
+                  <p className="text-3xl font-bold mt-1">—</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2"><RecentActivities /></div>
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-4 h-64 overflow-hidden flex flex-col">
+              <h2 className="text-lg font-semibold mb-4">Recent Earners</h2>
+              <div className="flex-1 overflow-hidden relative"><div className="absolute inset-0"><RecentEarners scrollMode="vertical" /></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!loading && error) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <p className="text-red-500 mb-4">Error: {error || "Failed to load user data"}</p>
+          <p className="text-red-500 mb-4">{error}</p>
           <Button onClick={() => window.location.reload()}>Try Again</Button>
         </div>
       </div>
@@ -139,6 +171,7 @@ export default function DashboardPage() {
       title: "Challenges Completed",
       value: Array.isArray(completedSubmissions) ? completedSubmissions.length.toString() : "0",
       icon: <CheckCircle className="h-5 w-5 text-green-500" />,
+      iconBg: "bg-green-50 dark:bg-green-900/20",
       change: Array.isArray(completedSubmissions)
         ? `+${
             completedSubmissions.filter((sub) => {
@@ -155,6 +188,7 @@ export default function DashboardPage() {
       title: "Total Earned",
       value: formatCurrency(userData?.totalEarnings ?? "0"),
       icon: <Zap className="h-5 w-5 text-yellow-500" />,
+      iconBg: "bg-yellow-50 dark:bg-yellow-900/20",
       change: "View transactions",
       trend: "neutral" as const,
     },
@@ -162,6 +196,7 @@ export default function DashboardPage() {
       title: "NFT Badges",
       value: Array.isArray(userData?.badges) ? userData.badges.length.toString() : "0",
       icon: <Award className="h-5 w-5 text-purple-500" />,
+      iconBg: "bg-purple-50 dark:bg-purple-900/20",
       change: Array.isArray(userData?.badges) ? `${userData.badges.length} earned` : "0 earned",
       trend: "up" as const,
     },
@@ -169,6 +204,7 @@ export default function DashboardPage() {
       title: "Active Challenges",
       value: Array.isArray(activeChallenges) ? activeChallenges.length.toString() : "0",
       icon: <Code className="h-5 w-5 text-blue-500" />,
+      iconBg: "bg-blue-50 dark:bg-blue-900/20",
       change: (() => {
         if (!Array.isArray(activeChallenges)) return "On track"
         const upcomingCount = activeChallenges.filter(
@@ -223,8 +259,6 @@ export default function DashboardPage() {
                         className={`h-3 w-3 ${
                           stat.trend === "up"
                             ? "text-green-500"
-                            : stat.trend === "down"
-                            ? "text-red-500"
                             : "text-gray-500"
                         }`}
                       />
@@ -232,8 +266,6 @@ export default function DashboardPage() {
                         className={`text-xs font-medium ${
                           stat.trend === "up"
                             ? "text-green-600 dark:text-green-400"
-                            : stat.trend === "down"
-                            ? "text-red-600 dark:text-red-400"
                             : "text-gray-600 dark:text-gray-400"
                         }`}
                       >

@@ -3,294 +3,253 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
-import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarFooter,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupContent,
-  SidebarSeparator,
-} from "@/components/ui/sidebar"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Home, Award, HelpCircle, Info, Settings, LogOut, Wallet, User, BarChart3, Zap, ArrowLeft } from "lucide-react"
+import { Home, Award, HelpCircle, Info, Settings, LogOut, Wallet, User, BarChart3, Zap, ArrowLeft, Swords } from "lucide-react"
 import Link from "next/link"
 import { useWallet } from "@/hooks/use-wallet"
 import { motion, AnimatePresence } from "framer-motion"
+import { SidebarProvider } from "@/components/ui/sidebar"
+
+const navigationItems = [
+  { href: "/", icon: ArrowLeft, label: "Back to Home" },
+  { href: "/dashboard", icon: Home, label: "Dashboard" },
+  { href: "/arena", icon: Swords, label: "BaseArena" },
+  { href: "/challenges", icon: Award, label: "Challenges" },
+  { href: "/leaderboard", icon: BarChart3, label: "Leaderboard" },
+  { href: "/how-it-works", icon: HelpCircle, label: "How It Works" },
+  { href: "/about", icon: Info, label: "About" },
+]
+
+const accountItems = [
+  { href: "/profile", icon: User, label: "Profile" },
+  { href: "/wallet", icon: Wallet, label: "Wallet" },
+  { href: "/settings", icon: Settings, label: "Settings" },
+]
+
+function Logo({ collapsed }: { collapsed: boolean }) {
+  return (
+    <Link href="/" className="flex items-center gap-3 group overflow-hidden">
+      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-shrink-0">
+        <svg width="32" height="24" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="9,4 3,12 9,20" stroke="#0d9488" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <polyline points="23,4 29,12 23,20" stroke="#0d9488" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <rect x="12" y="8" width="8" height="8" rx="1.5" fill="#0d9488" />
+        </svg>
+      </motion.div>
+      <AnimatePresence>
+        {!collapsed && (
+          <motion.span
+            initial={{ opacity: 0, width: 0 }}
+            animate={{ opacity: 1, width: "auto" }}
+            exit={{ opacity: 0, width: 0 }}
+            transition={{ duration: 0.2 }}
+            className="font-bold text-xl whitespace-nowrap overflow-hidden"
+          >
+            BaseArena
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </Link>
+  )
+}
+
+function NavItem({
+  href, icon: Icon, label, isActive, collapsed,
+}: {
+  href: string; icon: React.ElementType; label: string; isActive: boolean; collapsed: boolean
+}) {
+  return (
+    <Link href={href} className="relative group block overflow-visible">
+      <motion.div
+        whileHover={{ x: collapsed ? 0 : 2 }}
+        whileTap={{ scale: 0.97 }}
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
+          isActive
+            ? "bg-teal-50 dark:bg-teal-900/20"
+            : "hover:bg-gray-100 dark:hover:bg-gray-800"
+        } ${collapsed ? "justify-center" : ""}`}
+      >
+        <div className={`flex-shrink-0 p-1.5 rounded-lg transition-colors ${
+          isActive
+            ? "bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400"
+            : "text-gray-500 dark:text-gray-400 group-hover:text-teal-600 dark:group-hover:text-teal-400"
+        }`}>
+          <Icon className="h-4 w-4" />
+        </div>
+        <AnimatePresence>
+          {!collapsed && (
+            <motion.span
+              initial={{ opacity: 0, width: 0 }}
+              animate={{ opacity: 1, width: "auto" }}
+              exit={{ opacity: 0, width: 0 }}
+              transition={{ duration: 0.2 }}
+              className={`text-sm font-medium whitespace-nowrap overflow-hidden ${
+                isActive ? "text-teal-600 dark:text-teal-400" : "text-gray-700 dark:text-gray-300"
+              }`}
+            >
+              {label}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* Active bar — sits on the left edge of the sidebar, outside the link padding */}
+      {isActive && (
+        <motion.div
+          layoutId="activeBar"
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-gradient-to-b from-teal-500 to-teal-600 rounded-r-full"
+        />
+      )}
+
+      {/* Tooltip when collapsed */}
+      {collapsed && (
+        <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+          <div className="bg-gray-900 dark:bg-gray-700 text-white text-xs font-medium px-2.5 py-1.5 rounded-lg whitespace-nowrap shadow-lg">
+            {label}
+            <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900 dark:border-r-gray-700" />
+          </div>
+        </div>
+      )}
+    </Link>
+  )
+}
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const { isConnected, disconnect } = useWallet()
+  const { isConnected, address, disconnect } = useWallet()
   const [mounted, setMounted] = useState(false)
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null)
+  const [hovered, setHovered] = useState(false)
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const isArena = pathname.startsWith("/arena")
+  // On arena: collapsed by default, expand on hover. Elsewhere: always expanded.
+  const collapsed = isArena && !hovered
 
-  if (!mounted) {
-    return null
-  }
+  useEffect(() => { setMounted(true) }, [])
+  if (!mounted) return null
 
-  const navigationItems = [
-    { href: "/", icon: ArrowLeft, label: "Back to Home" },
-    { href: "/dashboard", icon: Home, label: "Dashboard" },
-    { href: "/challenges", icon: Award, label: "Challenges" },
-    { href: "/leaderboard", icon: BarChart3, label: "Leaderboard" },
-    { href: "/how-it-works", icon: HelpCircle, label: "How It Works" },
-    { href: "/about", icon: Info, label: "About" },
-  ]
-
-  const accountItems = [
-    { href: "/profile", icon: User, label: "Profile" },
-    { href: "/wallet", icon: Wallet, label: "Wallet" },
-    { href: "/settings", icon: Settings, label: "Settings" },
-  ]
+  const sidebarWidth = collapsed ? "w-[68px]" : "w-64"
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
-        <Sidebar className="hidden md:flex w-64 flex-shrink-0 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-r border-gray-200/50 dark:border-gray-700/50 shadow-xl">
-          <SidebarHeader className="px-6 py-6 border-b border-gray-200/50 dark:border-gray-700/50">
-            <Link href="/" className="flex items-center gap-3 group">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              >
-                <svg width="40" height="30" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <polyline points="9,4 3,12 9,20" stroke="#0d9488" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                  <polyline points="23,4 29,12 23,20" stroke="#0d9488" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                  <rect x="12" y="8" width="8" height="8" rx="1.5" fill="#0d9488" />
-                </svg>
-              </motion.div>
-              <div className="font-bold text-xl group-hover:opacity-80 transition-opacity duration-300">
-                BaseArena
-              </div>
-            </Link>
-          </SidebarHeader>
+      <div className="flex min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
 
-          <SidebarContent className="px-4 py-4 overflow-y-auto">
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-                Navigation
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu className="space-y-1">
-                  {navigationItems.map((item) => {
-                    const isActive = pathname === item.href || (item.href === "/challenges" && pathname.startsWith("/challenges/"))
-                    const Icon = item.icon
-                    
-                    return (
-                      <SidebarMenuItem key={item.href}>
-                        <SidebarMenuButton 
-                          asChild 
-                          isActive={isActive}
-                          className="group relative"
-                        >
-                          <Link 
-                            href={item.href}
-                            onMouseEnter={() => setHoveredItem(item.href)}
-                            onMouseLeave={() => setHoveredItem(null)}
-                          >
-                            <motion.div 
-                              className="flex items-center w-full px-3 py-2.5 rounded-xl transition-all duration-200"
-                              whileHover={{ x: 2 }}
-                              whileTap={{ scale: 0.98 }}
-                            >
-                              <div className={`p-1.5 rounded-lg mr-3 transition-all duration-200 ${
-                                isActive 
-                                  ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400' 
-                                  : 'text-gray-600 dark:text-gray-400 group-hover:bg-gray-100 dark:group-hover:bg-gray-800 group-hover:text-teal-600 dark:group-hover:text-teal-400'
-                              }`}>
-                                <Icon className="h-4 w-4" />
-                              </div>
-                              <span className={`font-medium transition-colors duration-200 ${
-                                isActive 
-                                  ? 'text-teal-600 dark:text-teal-400' 
-                                  : 'text-gray-700 dark:text-gray-300 group-hover:text-teal-600 dark:group-hover:text-teal-400'
-                              }`}>
-                                {item.label}
-                              </span>
-                            </motion.div>
-                            
-                            {/* Active indicator */}
-                            <AnimatePresence>
-                              {isActive && (
-                                <motion.div
-                                  className="absolute left-0 top-1/2 w-1 h-8 bg-gradient-to-b from-teal-500 to-teal-600 rounded-r-full"
-                                  initial={{ opacity: 0, scaleY: 0 }}
-                                  animate={{ opacity: 1, scaleY: 1 }}
-                                  exit={{ opacity: 0, scaleY: 0 }}
-                                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                                  style={{ y: "-50%" }}
-                                />
-                              )}
-                            </AnimatePresence>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    )
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+        {/* Sidebar */}
+        <motion.aside
+          animate={{ width: collapsed ? 68 : 256 }}
+          transition={{ duration: 0.25, ease: "easeInOut" }}
+          onMouseEnter={() => isArena && setHovered(true)}
+          onMouseLeave={() => isArena && setHovered(false)}
+          className="hidden md:flex flex-col flex-shrink-0 h-screen sticky top-0 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-r border-gray-200/50 dark:border-gray-700/50 shadow-xl overflow-hidden z-40"
+        >
+          {/* Header */}
+          <div className={`border-b border-gray-200/50 dark:border-gray-700/50 flex-shrink-0 ${collapsed ? "px-3 py-5" : "px-6 py-6"}`}>
+            <Logo collapsed={collapsed} />
+          </div>
+
+          {/* Nav */}
+          <div className={`flex-1 overflow-y-auto py-4 scrollbar-none ${collapsed ? "px-2" : "px-4"}`}>
+            {/* Section label */}
+            {!collapsed && (
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-3">Navigation</p>
+            )}
+            <div className="space-y-1">
+              {navigationItems.map(item => (
+                <NavItem
+                  key={item.href}
+                  href={item.href}
+                  icon={item.icon}
+                  label={item.label}
+                  isActive={
+                    pathname === item.href ||
+                    (item.href === "/challenges" && pathname.startsWith("/challenges/")) ||
+                    (item.href === "/arena" && pathname.startsWith("/arena"))
+                  }
+                  collapsed={collapsed}
+                />
+              ))}
+            </div>
 
             {isConnected && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <SidebarSeparator className="my-6 bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent" />
-                
-                <SidebarGroup>
-                  <SidebarGroupLabel className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-                    Account
-                  </SidebarGroupLabel>
-                  <SidebarGroupContent>
-                    <SidebarMenu className="space-y-1">
-                      {accountItems.map((item) => {
-                        const isActive = pathname === item.href
-                        const Icon = item.icon
-                        
-                        return (
-                          <SidebarMenuItem key={item.href}>
-                            <SidebarMenuButton 
-                              asChild 
-                              isActive={isActive}
-                              className="group relative"
-                            >
-                              <Link 
-                                href={item.href}
-                                onMouseEnter={() => setHoveredItem(item.href)}
-                                onMouseLeave={() => setHoveredItem(null)}
-                              >
-                                <motion.div 
-                                  className="flex items-center w-full px-3 py-2.5 rounded-xl transition-all duration-200"
-                                  whileHover={{ x: 2 }}
-                                  whileTap={{ scale: 0.98 }}
-                                >
-                                  <div className={`p-1.5 rounded-lg mr-3 transition-all duration-200 ${
-                                    isActive 
-                                      ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400' 
-                                      : 'text-gray-600 dark:text-gray-400 group-hover:bg-gray-100 dark:group-hover:bg-gray-800 group-hover:text-teal-600 dark:group-hover:text-teal-400'
-                                  }`}>
-                                    <Icon className="h-4 w-4" />
-                                  </div>
-                                  <span className={`font-medium transition-colors duration-200 ${
-                                    isActive 
-                                      ? 'text-teal-600 dark:text-teal-400' 
-                                      : 'text-gray-700 dark:text-gray-300 group-hover:text-teal-600 dark:group-hover:text-teal-400'
-                                  }`}>
-                                    {item.label}
-                                  </span>
-                                </motion.div>
-                                
-                                {/* Active indicator */}
-                                <AnimatePresence>
-                                  {isActive && (
-                                    <motion.div
-                                      className="absolute left-0 top-1/2 w-1 h-8 bg-gradient-to-b from-teal-500 to-teal-600 rounded-r-full"
-                                      initial={{ opacity: 0, scaleY: 0 }}
-                                      animate={{ opacity: 1, scaleY: 1 }}
-                                      exit={{ opacity: 0, scaleY: 0 }}
-                                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                                      style={{ y: "-50%" }}
-                                    />
-                                  )}
-                                </AnimatePresence>
-                              </Link>
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        )
-                      })}
-                    </SidebarMenu>
-                  </SidebarGroupContent>
-                </SidebarGroup>
-              </motion.div>
+              <>
+                <div className={`my-4 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent ${collapsed ? "mx-1" : "mx-2"}`} />
+                {!collapsed && (
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-3">Account</p>
+                )}
+                <div className="space-y-1">
+                  {accountItems.map(item => (
+                    <NavItem
+                      key={item.href}
+                      href={item.href}
+                      icon={item.icon}
+                      label={item.label}
+                      isActive={pathname === item.href}
+                      collapsed={collapsed}
+                    />
+                  ))}
+                </div>
+              </>
             )}
-          </SidebarContent>
+          </div>
 
-          <SidebarFooter className="border-t border-gray-200/50 dark:border-gray-700/50 p-6 bg-gradient-to-b from-transparent to-gray-50/50 dark:to-gray-800/50">
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Theme</span>
-                <ModeToggle />
-              </div>
+          {/* Footer */}
+          <div className={`border-t border-gray-200/50 dark:border-gray-700/50 flex-shrink-0 ${collapsed ? "px-2 py-4" : "px-4 py-5"}`}>
+            <div className={`flex ${collapsed ? "flex-col items-center gap-3" : "items-center justify-between mb-4"}`}>
+              {!collapsed && <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Theme</span>}
+              <ModeToggle />
+            </div>
 
-              {isConnected ? (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <SidebarSeparator className="bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent" />
-                  
-                  <div className="flex items-center gap-3 min-w-0 p-3 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 border border-gray-200/50 dark:border-gray-600/50">
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Avatar className="h-10 w-10 flex-shrink-0 ring-2 ring-teal-500/20 dark:ring-teal-400/20">
-                        <AvatarImage src="/placeholder.svg?height=40&width=40" alt="User" />
-                        <AvatarFallback className="bg-gradient-to-br from-teal-500 to-teal-600 text-white font-semibold">
-                          JD
-                        </AvatarFallback>
-                      </Avatar>
-                    </motion.div>
-                    <div className="flex flex-col flex-1 min-w-0">
-                      <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">
-                        John Doe
-                      </span>
-                      <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                        <motion.div
-                          animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                        >
-                          <Zap className="h-3 w-3 mr-1 text-yellow-500 flex-shrink-0" />
-                        </motion.div>
-                      <span className="truncate font-medium">Earnings</span>
-                      </div>
+            {isConnected && !collapsed && (
+              <div className="mt-3 space-y-3">
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200/50 dark:border-gray-600/50">
+                  <Avatar className="h-9 w-9 flex-shrink-0 ring-2 ring-teal-500/20">
+                    <AvatarImage src="/placeholder.svg" />
+                    <AvatarFallback className="bg-teal-500 text-white text-xs font-bold">
+                      {address ? address.slice(2, 4).toUpperCase() : "??"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold truncate text-gray-800 dark:text-gray-200">
+                      {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "Connected"}
+                    </p>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <Zap className="h-3 w-3 text-yellow-500" />
+                      <span className="text-xs text-gray-500">Earnings</span>
                     </div>
                   </div>
-                  
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 border-red-200 dark:border-red-800 transition-all duration-200"
-                      onClick={disconnect}
-                    >
-                      <LogOut className="h-4 w-4 mr-2 flex-shrink-0" />
-                      <span className="truncate font-medium">Disconnect</span>
-                    </Button>
-                  </motion.div>
-                </motion.div>
-              ) : null}
-            </div>
-          </SidebarFooter>
-        </Sidebar>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 border-red-200 dark:border-red-800"
+                  onClick={disconnect}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Disconnect
+                </Button>
+              </div>
+            )}
 
-        <div className="flex-1 overflow-hidden">
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="h-full overflow-auto"
-          >
-            {children}
-          </motion.div>
+            {isConnected && collapsed && (
+              <div className="relative group mt-2">
+                <button onClick={disconnect} className="w-full flex justify-center p-2 rounded-xl text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                  <LogOut className="h-4 w-4" />
+                </button>
+                <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="bg-gray-900 text-white text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap shadow-lg">
+                    Disconnect
+                    <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900" />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.aside>
+
+        {/* Main content */}
+        <div className="flex-1 min-w-0 overflow-auto">
+          {children}
         </div>
       </div>
     </SidebarProvider>
