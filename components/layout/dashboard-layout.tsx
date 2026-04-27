@@ -127,7 +127,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [hovered, setHovered] = useState(false)
 
   const isArena = pathname.startsWith("/arena")
-  const collapsed = isArena && !hovered
+  const collapsed = !hovered
   const sidebarW = collapsed ? COLLAPSED_W : EXPANDED_W
 
   useEffect(() => { setMounted(true) }, [])
@@ -141,8 +141,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <motion.aside
         animate={{ width: sidebarW }}
         transition={{ duration: 0.22, ease: "easeInOut" }}
-        onMouseEnter={() => isArena && setHovered(true)}
-        onMouseLeave={() => isArena && setHovered(false)}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         className="hidden md:flex fixed left-0 top-0 h-screen flex-col z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-700/50 shadow-xl overflow-hidden"
         style={{ width: sidebarW }}
       >

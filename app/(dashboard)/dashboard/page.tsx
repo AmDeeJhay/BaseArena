@@ -124,8 +124,12 @@ export default function DashboardPage() {
         <div className="w-full max-w-7xl px-4 py-8 space-y-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">Dashboard</h1>
-              <p className="text-gray-600 dark:text-gray-300 text-lg">Welcome! Connect your wallet or complete your profile to get started.</p>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                {username && username !== "User" ? `Welcome back, ${username}!` : "Dashboard"}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 text-lg">
+                {username && username !== "User" ? "Track your progress, complete challenges, and earn rewards on your skill journey." : "Welcome! Connect your wallet or complete your profile to get started."}
+              </p>
             </div>
             <Link href="/challenges">
               <Button className="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 shadow-lg px-6 py-3 text-lg">
@@ -145,9 +149,33 @@ export default function DashboardPage() {
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2"><RecentActivities /></div>
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-4 h-64 overflow-hidden flex flex-col">
-              <h2 className="text-lg font-semibold mb-4">Recent Earners</h2>
-              <div className="flex-1 overflow-hidden relative"><div className="absolute inset-0"><RecentEarners scrollMode="vertical" /></div></div>
+            <div className="space-y-8">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-4 h-64 overflow-hidden flex flex-col">
+                <h2 className="text-lg font-semibold mb-4">Recent Earners</h2>
+                <div className="flex-1 overflow-hidden relative"><div className="absolute inset-0"><RecentEarners scrollMode="vertical" /></div></div>
+              </div>
+              <Card className="border-0 shadow-lg h-64 overflow-hidden">
+                <CardHeader>
+                  <CardTitle className="text-lg">Arena Updates</CardTitle>
+                  <CardDescription>Latest activity from the community</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3 overflow-y-auto h-40">
+                  <div className="space-y-3">
+                    <div className="p-3 bg-gradient-to-r from-teal-50 to-blue-50 dark:from-teal-900/20 dark:to-blue-900/20 rounded-lg border border-teal-200 dark:border-teal-800">
+                      <p className="text-xs text-gray-600 dark:text-gray-300">Someone completed a challenge in the arena</p>
+                      <p className="text-xs text-gray-400 mt-1">2 minutes ago</p>
+                    </div>
+                    <div className="p-3 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                      <p className="text-xs text-gray-600 dark:text-gray-300">New challenge posted by community</p>
+                      <p className="text-xs text-gray-400 mt-1">15 minutes ago</p>
+                    </div>
+                    <div className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                      <p className="text-xs text-gray-600 dark:text-gray-300">Top earner earned 2.5 ETH this week</p>
+                      <p className="text-xs text-gray-400 mt-1">1 hour ago</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
@@ -179,14 +207,13 @@ export default function DashboardPage() {
       icon: <CheckCircle className="h-5 w-5 text-green-500" />,
       iconBg: "bg-green-50 dark:bg-green-900/20",
       change: Array.isArray(completedSubmissions)
-        ? `+${
-            completedSubmissions.filter((sub) => {
-              const submissionDate = new Date(sub?.submittedAt ?? 0)
-              const oneMonthAgo = new Date()
-              oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
-              return submissionDate > oneMonthAgo
-            }).length
-          } this month`
+        ? `+${completedSubmissions.filter((sub) => {
+          const submissionDate = new Date(sub?.submittedAt ?? 0)
+          const oneMonthAgo = new Date()
+          oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
+          return submissionDate > oneMonthAgo
+        }).length
+        } this month`
         : "0 this month",
       trend: "up" as const,
     },
@@ -231,7 +258,7 @@ export default function DashboardPage() {
             <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
               Welcome back, {username}!
             </h1>
-            <p className="text-gray-600 dark:text-gray-300 text-sm">
+            <p className="text-gray-600 dark:text-gray-300 text-xs">
               Track your progress, complete challenges, and earn rewards on your skill journey.
             </p>
           </div>
@@ -256,18 +283,16 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex items-center space-x-1">
                       <TrendingUp
-                        className={`h-3 w-3 ${
-                          stat.trend === "up"
+                        className={`h-3 w-3 ${stat.trend === "up"
                             ? "text-green-500"
                             : "text-gray-500"
-                        }`}
+                          }`}
                       />
                       <div
-                        className={`text-xs font-medium ${
-                          stat.trend === "up"
+                        className={`text-xs font-medium ${stat.trend === "up"
                             ? "text-green-600 dark:text-green-400"
                             : "text-gray-600 dark:text-gray-400"
-                        }`}
+                          }`}
                       >
                         {stat.change}
                       </div>

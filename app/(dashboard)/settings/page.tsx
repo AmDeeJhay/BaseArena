@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
@@ -12,6 +13,7 @@ import { useState, useEffect } from "react"
 
 export default function SettingsPage() {
   const [username, setUsername] = useState("")
+  const [gender, setGender] = useState<"male" | "female">("male")
   const [usernameError, setUsernameError] = useState("")
   const [successMessage, setSuccessMessage] = useState("")
   const [notificationSettings, setNotificationSettings] = useState({
@@ -25,7 +27,9 @@ export default function SettingsPage() {
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("skillmint_username")
+    const storedGender = localStorage.getItem("skillmint_gender") as "male" | "female" | null
     setUsername(storedUsername || "")
+    setGender(storedGender || "male")
   }, [])
 
   const handleUsernameChange = (value: string) => {
@@ -51,7 +55,8 @@ export default function SettingsPage() {
       return
     }
     localStorage.setItem("skillmint_username", username)
-    setSuccessMessage("Username updated successfully!")
+    localStorage.setItem("skillmint_gender", gender)
+    setSuccessMessage("Profile updated successfully!")
     setTimeout(() => setSuccessMessage(""), 3000)
   }
 
@@ -102,6 +107,19 @@ export default function SettingsPage() {
                     {usernameError && <p className="text-sm text-red-500">{usernameError}</p>}
                     {successMessage && <p className="text-sm text-green-500">{successMessage}</p>}
                     <p className="text-xs text-gray-500">3-20 characters. Letters, numbers, dashes, and underscores only.</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="gender">Gender</Label>
+                    <Select value={gender} onValueChange={(value: "male" | "female") => setGender(value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <Separator />

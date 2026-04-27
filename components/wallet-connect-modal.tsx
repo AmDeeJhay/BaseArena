@@ -4,10 +4,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useWallet } from "@/hooks/use-wallet"
 import { motion } from "framer-motion"
 import { Loader2 } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 const MetaMaskIcon = () => (
   <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask" className="w-6 h-6 object-contain" />
@@ -38,21 +39,31 @@ const wallets = [
 export function WalletConnectModal({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { connect } = useWallet()
   const [connecting, setConnecting] = useState<string | null>(null)
-  const [step, setStep] = useState<"wallet" | "username">("wallet")
+  const [step, setStep] = useState<"wallet" | "profile">("wallet")
   const [username, setUsername] = useState("")
+  const [gender, setGender] = useState<"male" | "female">("male")
   const [usernameError, setUsernameError] = useState("")
+
+  useEffect(() => {
+    if (open) {
+      setStep("wallet")
+      setUsername("")
+      setGender("male")
+      setUsernameError("")
+    }
+  }, [open])
 
   const handleConnect = async (walletId: string) => {
     setConnecting(walletId)
     try {
       await connect(walletId)
-      setStep("username")
+      setStep("profile")
     } finally {
       setConnecting(null)
     }
   }
 
-  const handleUsernameSubmit = () => {
+  const handleProfileSubmit = () => {
     if (!username.trim()) {
       setUsernameError("Username is required")
       return
@@ -69,11 +80,11 @@ export function WalletConnectModal({ open, onOpenChange }: { open: boolean; onOp
       setUsernameError("Username can only contain letters, numbers, dashes, and underscores")
       return
     }
-    // Store username in localStorage or pass to backend
+    // Store username and gender in localStorage
     localStorage.setItem("skillmint_username", username)
+    localStorage.setItem("skillmint_gender", gender)
     onOpenChange(false)
     setStep("wallet")
-    setUsername("")
   }
 
   return (
@@ -121,9 +132,9 @@ export function WalletConnectModal({ open, onOpenChange }: { open: boolean; onOp
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>Create Your Username</DialogTitle>
+              <DialogTitle>Create Your Profile</DialogTitle>
               <DialogDescription>
-                Choose a unique username for your SkillMint profile. You can change it later in your settings.
+                Choose a unique username and select your gender for your SkillMint profile. You can change these later in your settings.
               </DialogDescription>
             </DialogHeader>
             <div className="py-4 space-y-4">
@@ -142,9 +153,21 @@ export function WalletConnectModal({ open, onOpenChange }: { open: boolean; onOp
                 {usernameError && <p className="text-sm text-red-500">{usernameError}</p>}
                 <p className="text-xs text-gray-500">3-20 characters. Letters, numbers, dashes, and underscores only.</p>
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="gender">Gender</Label>
+                <Select value={gender} onValueChange={(value: "male" | "female") => setGender(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <Button
                 className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800"
-                onClick={handleUsernameSubmit}
+                onClick={handleProfileSubmit}
               >
                 Continue to Dashboard
               </Button>
