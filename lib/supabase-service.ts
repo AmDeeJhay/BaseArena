@@ -353,7 +353,7 @@ export const arenaService = {
         const client = ensureSupabase()
         const { data, error } = await client
             .from("arena_posts")
-            .select("*, author:author_id(username, profile_image)")
+            .select("*, author:author_address(username, profile_image)")
             .eq("id", id)
             .single()
 
@@ -365,7 +365,7 @@ export const arenaService = {
         const client = ensureSupabase()
         const { data, error } = await client
             .from("arena_posts")
-            .select("*, author:author_id(id, username, profile_image)")
+            .select("*, author:author_address(id, username, profile_image)")
             .order("created_at", { ascending: false })
             .limit(limit)
 
@@ -373,12 +373,12 @@ export const arenaService = {
         return data || []
     },
 
-    async getPostsByAuthor(authorId: string): Promise<any[]> {
+    async getPostsByAuthor(authorAddress: string): Promise<any[]> {
         const client = ensureSupabase()
         const { data, error } = await client
             .from("arena_posts")
             .select("*")
-            .eq("author_id", authorId)
+            .eq("author_address", authorAddress)
             .order("created_at", { ascending: false })
 
         if (error) throw error
@@ -397,22 +397,22 @@ export const arenaService = {
         return comment
     },
 
-    async likePost(postId: string, userId: string): Promise<void> {
+    async likePost(postId: string, userAddress: string): Promise<void> {
         const client = ensureSupabase()
         const { error } = await client
             .from("arena_likes")
-            .insert({ post_id: postId, user_id: userId })
+            .insert({ post_id: postId, user_address: userAddress })
 
         if (error && error.code !== "23505") throw error
     },
 
-    async unlikePost(postId: string, userId: string): Promise<void> {
+    async unlikePost(postId: string, userAddress: string): Promise<void> {
         const client = ensureSupabase()
         const { error } = await client
             .from("arena_likes")
             .delete()
             .eq("post_id", postId)
-            .eq("user_id", userId)
+            .eq("user_address", userAddress)
 
         if (error) throw error
     },

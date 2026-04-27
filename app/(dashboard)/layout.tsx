@@ -22,6 +22,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (mounted && !isConnected) {
       setIsWalletModalOpen(true)
+    } else if (mounted && isConnected) {
+      // Don't close the modal here - let the modal handle it after profile setup
     }
   }, [mounted, isConnected])
 

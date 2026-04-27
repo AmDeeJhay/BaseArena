@@ -25,9 +25,9 @@ const WalletContext = createContext<WalletContextType>({
   balance: null,
   balanceUsd: null,
   connectedAt: null,
-  connect: async () => {},
-  disconnect: () => {},
-  refreshBalance: async () => {},
+  connect: async () => { },
+  disconnect: () => { },
+  refreshBalance: async () => { },
 })
 
 async function switchToBase(provider: any) {
@@ -93,7 +93,25 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [connectedAt, setConnectedAt] = useState<string | null>(null)
   const router = useRouter()
 
-  const disconnect = useCallback(() => {
+  const disconnect = useCallback(async () => {
+    try {
+      const provider = (window as any).ethereum
+      if (provider) {
+        // Try to revoke permissions if supported
+        try {
+          await provider.request({
+            method: 'wallet_revokePermissions',
+            params: [{ eth_accounts: {} }]
+          })
+        } catch (err) {
+          // Ignore if not supported
+          console.log('Wallet revoke permissions not supported')
+        }
+      }
+    } catch (err) {
+      console.log('Error disconnecting wallet:', err)
+    }
+
     setIsConnected(false)
     setAddress(null)
     setBalance(null)
@@ -102,6 +120,8 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("wallet-connected")
     localStorage.removeItem("wallet-address")
     localStorage.removeItem("wallet-connected-at")
+    localStorage.removeItem("skillmint_username")
+    localStorage.removeItem("skillmint_gender")
     router.push("/")
   }, [router])
 
@@ -175,7 +195,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("wallet-connected-at", now)
 
       await refreshBalance(accounts[0])
-      router.push("/dashboard")
+      // Removed router.push("/dashboard") - let the modal handle navigation
     } catch (err: any) {
       if (err.code !== 4001) console.error("Wallet connect error:", err)
     } finally {

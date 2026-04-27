@@ -55,7 +55,7 @@ class ArenaService {
   async createPost(payload: CreatePostPayload): Promise<ArenaPost> {
     try {
       const post = await supabaseArenaService.createPost({
-        author_id: payload.authorAddress,
+        author_address: payload.authorAddress,
         content: payload.content,
         type: payload.type,
         signature: payload.signature,
@@ -113,7 +113,7 @@ class ArenaService {
   async addComment(postId: string, content: string, authorAddress: string, signature: string): Promise<ArenaComment> {
     try {
       const comment = await supabaseArenaService.addComment(postId, {
-        author_id: authorAddress,
+        author_address: authorAddress,
         content,
         signature,
       })

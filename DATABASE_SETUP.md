@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS user_badges (
 -- Arena Posts table
 CREATE TABLE IF NOT EXISTS arena_posts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  author_address VARCHAR(255) NOT NULL,
   content TEXT NOT NULL,
   type VARCHAR(50) DEFAULT 'general',
   signature TEXT,
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS arena_posts (
 CREATE TABLE IF NOT EXISTS arena_comments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   post_id UUID NOT NULL REFERENCES arena_posts(id) ON DELETE CASCADE,
-  author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  author_address VARCHAR(255) NOT NULL,
   content TEXT NOT NULL,
   signature TEXT,
   created_at TIMESTAMP DEFAULT NOW()
@@ -110,9 +110,9 @@ CREATE TABLE IF NOT EXISTS arena_comments (
 CREATE TABLE IF NOT EXISTS arena_likes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   post_id UUID NOT NULL REFERENCES arena_posts(id) ON DELETE CASCADE,
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_address VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT NOW(),
-  UNIQUE(post_id, user_id)
+  UNIQUE(post_id, user_address)
 );
 
 -- Activities table (for tracking user activities)
@@ -136,7 +136,7 @@ CREATE INDEX IF NOT EXISTS idx_challenges_status ON challenges(status);
 CREATE INDEX IF NOT EXISTS idx_submissions_user ON submissions(user_id);
 CREATE INDEX IF NOT EXISTS idx_submissions_challenge ON submissions(challenge_id);
 CREATE INDEX IF NOT EXISTS idx_user_badges_user ON user_badges(user_id);
-CREATE INDEX IF NOT EXISTS idx_arena_posts_author ON arena_posts(author_id);
+CREATE INDEX IF NOT EXISTS idx_arena_posts_author ON arena_posts(author_address);
 CREATE INDEX IF NOT EXISTS idx_arena_posts_created ON arena_posts(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_activities_user ON activities(user_id);
 
@@ -150,6 +150,15 @@ ALTER TABLE arena_posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE arena_comments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE arena_likes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE activities ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for Arena Posts
+CREATE POLICY "Enable all operations for arena_posts" ON arena_posts FOR ALL USING (true) WITH CHECK (true);
+
+-- RLS Policies for Arena Comments
+CREATE POLICY "Enable all operations for arena_comments" ON arena_comments FOR ALL USING (true) WITH CHECK (true);
+
+-- RLS Policies for Arena Likes
+CREATE POLICY "Enable all operations for arena_likes" ON arena_likes FOR ALL USING (true) WITH CHECK (true);
 ```
 
 ## Step 3: Paste into Supabase

@@ -9,6 +9,7 @@ import { useWallet } from "@/hooks/use-wallet"
 import { motion } from "framer-motion"
 import { Loader2 } from "lucide-react"
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 const MetaMaskIcon = () => (
   <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask" className="w-6 h-6 object-contain" />
@@ -38,6 +39,7 @@ const wallets = [
 
 export function WalletConnectModal({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { connect } = useWallet()
+  const router = useRouter()
   const [connecting, setConnecting] = useState<string | null>(null)
   const [step, setStep] = useState<"wallet" | "profile">("wallet")
   const [username, setUsername] = useState("")
@@ -85,10 +87,15 @@ export function WalletConnectModal({ open, onOpenChange }: { open: boolean; onOp
     localStorage.setItem("skillmint_gender", gender)
     onOpenChange(false)
     setStep("wallet")
+    router.push("/dashboard")
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(newOpen) => {
+      // Prevent closing during profile step
+      if (step === "profile" && !newOpen) return
+      onOpenChange(newOpen)
+    }}>
       <DialogContent className="sm:max-w-md">
         {step === "wallet" ? (
           <>

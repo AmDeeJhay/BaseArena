@@ -191,7 +191,7 @@ export default function ChallengesPage() {
           <div className="w-full overflow-hidden">
             <Tabs defaultValue="all" className="w-full" onValueChange={setCurrentTab}>
               <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-                <div className="w-full lg:w-auto overflow-x-auto">
+                <div className="w-full lg:w-auto">
                   <TabsList className="bg-gray-100 dark:bg-gray-800 w-full lg:w-auto min-w-max">
                     <TabsTrigger value="all" className="whitespace-nowrap">
                       All Challenges
