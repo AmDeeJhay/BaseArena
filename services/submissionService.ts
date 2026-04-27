@@ -1,12 +1,66 @@
-import axios from "axios";
-import BASE_URL from "./baseUrl";
+import { submissionService as supabaseSubmissionService } from "@/lib/supabase-service"
 
 export const submissionService = {
-  createSubmission: (data: any) => axios.post(`${BASE_URL}/submissions`, data),
-  getAllSubmissions: () => axios.get(`${BASE_URL}/submissions`),
-  getSubmissionById: (id: string) => axios.get(`${BASE_URL}/submissions/${id}`),
-  getSubmissionsByChallenge: (challengeId: string) => axios.get(`${BASE_URL}/submissions/challenge/${challengeId}`),
-  getSubmissionsByUser: (userId: string) => axios.get(`${BASE_URL}/submissions/user/${userId}`),
-  updateSubmission: (id: string, data: any) => axios.patch(`${BASE_URL}/submissions/${id}`, data),
-  deleteSubmission: (id: string) => axios.delete(`${BASE_URL}/submissions/${id}`),
-};
+  async createSubmission(data: any) {
+    try {
+      const submission = await supabaseSubmissionService.createSubmission(data)
+      return { data: submission }
+    } catch (error) {
+      return { error }
+    }
+  },
+
+  async getAllSubmissions() {
+    try {
+      return { data: [] }
+    } catch (error) {
+      return { error }
+    }
+  },
+
+  async getSubmissionById(id: string) {
+    try {
+      const submission = await supabaseSubmissionService.getSubmissionById(id)
+      if (!submission) throw new Error("Submission not found")
+      return { data: submission }
+    } catch (error) {
+      return { error }
+    }
+  },
+
+  async getSubmissionsByChallenge(challengeId: string) {
+    try {
+      const submissions = await supabaseSubmissionService.getSubmissionsByChallenge(challengeId)
+      return { data: submissions }
+    } catch (error) {
+      return { error }
+    }
+  },
+
+  async getSubmissionsByUser(userId: string) {
+    try {
+      const submissions = await supabaseSubmissionService.getSubmissionsByUser(userId)
+      return { data: submissions }
+    } catch (error) {
+      return { error }
+    }
+  },
+
+  async updateSubmission(id: string, data: any) {
+    try {
+      const submission = await supabaseSubmissionService.updateSubmission(id, data)
+      return { data: submission }
+    } catch (error) {
+      return { error }
+    }
+  },
+
+  async deleteSubmission(id: string) {
+    try {
+      await supabaseSubmissionService.deleteSubmission(id)
+      return { data: { success: true } }
+    } catch (error) {
+      return { error }
+    }
+  },
+}

@@ -1,5 +1,4 @@
-import axios, { type AxiosInstance } from "axios"
-import BASE_URL from "./baseUrl"
+import { activityService as supabaseActivityService, userService } from "@/lib/supabase-service"
 
 interface Activity {
   id: string
@@ -61,63 +60,66 @@ const mockActivities: Activity[] = [
 ]
 
 class ActivityService {
-  private api: AxiosInstance
-
-  constructor() {
-    this.api = axios.create({
-      baseURL: BASE_URL,
-      timeout: 10000,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-  }
-
-  public async fetchActivities(filters?: {
+  async fetchActivities(filters?: {
     userId?: string
     type?: string
     limit?: number
     offset?: number
   }): Promise<Activity[]> {
     try {
-      console.log("Fetching activities from API...")
+      console.log("Fetching activities from Supabase...")
 
-      const params = new URLSearchParams()
-      if (filters?.userId) params.append("userId", filters.userId)
-      if (filters?.type) params.append("type", filters.type)
-      if (filters?.limit) params.append("limit", filters.limit.toString())
-      if (filters?.offset) params.append("offset", filters.offset.toString())
+      const activities = await supabaseActivityService.getRecentActivities(filters?.limit || 50)
 
-      const response = await this.api.get<ActivitiesResponse>(`/activities?${params.toString()}`)
-      console.log(`Successfully fetched ${response.data.activities.length} activities from API`)
+      // Transform activities with user data
+      const enrichedActivities = await Promise.all(
+        activities.map(async (activity: any) => {
+          const user = await userService.getUserById(activity.user_id)
+          return {
+            id: activity.id,
+            type: activity.type,
+            userId: activity.user_id,
+            username: user?.username || "Unknown",
+            userAvatar: user?.profile_image || "/placeholder.svg",
+            challengeId: activity.challenge_id,
+            challengeTitle: activity.challengeTitle,
+            badgeId: activity.badge_id,
+            badgeName: activity.badgeName,
+            description: activity.description,
+            reward: activity.reward,
+            timestamp: activity.created_at,
+            metadata: activity.metadata,
+          }
+        })
+      )
 
-      return response.data.activities
-    } catch (error) {
-      console.warn("API request failed, using fallback activities:", error)
-
-      // Apply filters to fallback data
-      let filteredData = [...mockActivities]
+      // Apply filters
+      let filtered = [...enrichedActivities]
 
       if (filters?.userId) {
-        filteredData = filteredData.filter((activity) => activity.userId === filters.userId)
+        filtered = filtered.filter((activity) => activity.userId === filters.userId)
       }
 
       if (filters?.type) {
-        filteredData = filteredData.filter((activity) => activity.type === filters.type)
+        filtered = filtered.filter((activity) => activity.type === filters.type)
       }
 
       // Apply pagination
       if (filters?.offset || filters?.limit) {
         const offset = filters.offset || 0
-        const limit = filters.limit || filteredData.length
-        filteredData = filteredData.slice(offset, offset + limit)
+        const limit = filters.limit || filtered.length
+        filtered = filtered.slice(offset, offset + limit)
       }
 
-      return filteredData
+      console.log(`Successfully fetched ${filtered.length} activities from Supabase`)
+      return filtered
+    } catch (error) {
+      console.warn("Supabase request failed, using fallback activities:", error)
+      return mockActivities
     }
   }
 
-  public async createActivity(activityData: {
+  async createActivity(activityData: {
     type: Activity["type"]
     userId: string
     username: string
@@ -132,19 +134,42 @@ class ActivityService {
     try {
       console.log("Creating new activity...")
 
-      const response = await this.api.post<Activity>("/activities", activityData)
-      console.log(`Successfully created activity: ${response.data.description}`)
+      const activity = await supabaseActivityService.logActivity({
+        user_id: activityData.userId,
+        type: activityData.type,
+        description: activityData.description,
+        challenge_id: activityData.challengeId,
+        badge_id: activityData.badgeId,
+        reward: activityData.reward,
+        metadata: activityData.metadata,
+      })
 
-      return response.data
+      console.log(`Successfully created activity: ${activityData.description}`)
+
+      return {
+        id: activity.id,
+        type: activity.type,
+        userId: activity.user_id,
+        username: activityData.username,
+        userAvatar: "/placeholder.svg",
+        challengeId: activity.challenge_id,
+        challengeTitle: activityData.challengeTitle,
+        badgeId: activity.badge_id,
+        badgeName: activityData.badgeName,
+        description: activity.description,
+        reward: activity.reward,
+        timestamp: activity.created_at,
+        metadata: activity.metadata,
+      }
     } catch (error) {
       console.error("Failed to create activity:", error)
       return null
     }
   }
 
-  public async checkApiHealth(): Promise<boolean> {
+  async checkApiHealth(): Promise<boolean> {
     try {
-      await this.api.get("/health")
+      const activities = await supabaseActivityService.getRecentActivities(1)
       return true
     } catch {
       return false

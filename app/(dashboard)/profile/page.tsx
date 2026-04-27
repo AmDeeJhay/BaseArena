@@ -273,9 +273,8 @@ export default function ProfilePage() {
                               {[...Array(5)].map((_, i) => (
                                 <Star
                                   key={i}
-                                  className={`h-4 w-4 ${
-                                    i < challenge.rating ? "text-yellow-400 fill-current" : "text-gray-300"
-                                  }`}
+                                  className={`h-4 w-4 ${i < challenge.rating ? "text-yellow-400 fill-current" : "text-gray-300"
+                                    }`}
                                 />
                               ))}
                             </div>

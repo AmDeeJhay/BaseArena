@@ -81,6 +81,12 @@ export default function DashboardPage() {
   const [userData, setUserData] = useState<UserData | null>(null)
   const { loading, setLoading, setError, error } = useUIStore()
   const { address } = useWallet()
+  const [username, setUsername] = useState<string>("")
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("skillmint_username")
+    setUsername(storedUsername || "User")
+  }, [])
 
   useEffect(() => {
     if (!address) return
@@ -221,20 +227,14 @@ export default function DashboardPage() {
       <div className="w-full max-w-7xl px-4 py-8 space-y-8">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="space-y-2">
+          <div className="space-y-1">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
-              Dashboard
+              Welcome back, {username}!
             </h1>
-            <p className="text-gray-600 dark:text-gray-300 text-lg">
-              Welcome back, {userData?.username}! Track your progress and find new challenges.
+            <p className="text-gray-600 dark:text-gray-300 text-sm">
+              Track your progress, complete challenges, and earn rewards on your skill journey.
             </p>
           </div>
-          <Link href="/challenges">
-            <Button className="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 shadow-lg px-6 py-3 text-lg">
-              Browse Challenges
-              <ArrowRight className="h-5 w-5 ml-2" />
-            </Button>
-          </Link>
         </div>
 
         {/* Stats Grid */}
@@ -502,6 +502,28 @@ export default function DashboardPage() {
                 </div>
               </div>
             </div>
+            <Card className="border-0 shadow-lg h-64 overflow-hidden">
+              <CardHeader>
+                <CardTitle className="text-lg">Arena Updates</CardTitle>
+                <CardDescription>Latest activity from the community</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3 overflow-y-auto h-40">
+                <div className="space-y-3">
+                  <div className="p-3 bg-gradient-to-r from-teal-50 to-blue-50 dark:from-teal-900/20 dark:to-blue-900/20 rounded-lg border border-teal-200 dark:border-teal-800">
+                    <p className="text-xs text-gray-600 dark:text-gray-300">Someone completed a challenge in the arena</p>
+                    <p className="text-xs text-gray-400 mt-1">2 minutes ago</p>
+                  </div>
+                  <div className="p-3 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                    <p className="text-xs text-gray-600 dark:text-gray-300">New challenge posted by community</p>
+                    <p className="text-xs text-gray-400 mt-1">15 minutes ago</p>
+                  </div>
+                  <div className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                    <p className="text-xs text-gray-600 dark:text-gray-300">Top earner earned 2.5 ETH this week</p>
+                    <p className="text-xs text-gray-400 mt-1">1 hour ago</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

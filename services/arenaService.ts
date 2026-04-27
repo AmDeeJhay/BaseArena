@@ -1,5 +1,4 @@
-import axios, { type AxiosInstance } from "axios"
-import BASE_URL from "./baseUrl"
+import { arenaService as supabaseArenaService } from "@/lib/supabase-service"
 import type { ArenaPost, ArenaComment, CreatePostPayload } from "@/types/arena"
 
 export async function signMessage(message: string): Promise<string> {
@@ -41,52 +40,13 @@ const MOCK_POSTS: ArenaPost[] = [
     ],
     createdAt: new Date(Date.now() - 7200000).toISOString(),
   },
-  {
-    id: "mock-2",
-    authorAddress: "0xabc123def456abc123def456abc123def456abc1",
-    authorUsername: "Web3Dev",
-    authorAvatar: "/placeholder.svg",
-    content: "Earned 0.05 ETH from the Smart Contract Security Audit challenge. This platform is the real deal — proof is on-chain 💎",
-    type: "earning",
-    signature: "0x1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2",
-    contentHash: "xyz789",
-    earnedAmount: "0.05 ETH",
-    challengeTitle: "Smart Contract Security Audit",
-    txHash: "0x4e3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3",
-    likes: ["0x111", "0x222", "0x333"],
-    comments: [],
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-  },
-  {
-    id: "mock-3",
-    authorAddress: "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-    authorUsername: "UIWizard",
-    authorAvatar: "/placeholder.svg",
-    content: "Working on a new DeFi dashboard design for the upcoming challenge. Anyone want to collaborate? Drop a comment 👇",
-    type: "general",
-    signature: "0x9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8",
-    contentHash: "qrs456",
-    likes: [],
-    comments: [],
-    createdAt: new Date(Date.now() - 172800000).toISOString(),
-  },
 ]
 
 class ArenaService {
-  private api: AxiosInstance
-
-  constructor() {
-    this.api = axios.create({
-      baseURL: BASE_URL,
-      timeout: 10000,
-      headers: { "Content-Type": "application/json" },
-    })
-  }
-
   async fetchPosts(page = 1, limit = 20): Promise<ArenaPost[]> {
     try {
-      const res = await this.api.get<{ posts: ArenaPost[] }>(`/arena/posts?page=${page}&limit=${limit}`)
-      return res.data.posts
+      const posts = await supabaseArenaService.getAllPosts(limit)
+      return posts || MOCK_POSTS
     } catch {
       return page === 1 ? MOCK_POSTS : []
     }
@@ -94,8 +54,33 @@ class ArenaService {
 
   async createPost(payload: CreatePostPayload): Promise<ArenaPost> {
     try {
-      const res = await this.api.post<ArenaPost>("/arena/posts", payload)
-      return res.data
+      const post = await supabaseArenaService.createPost({
+        author_id: payload.authorAddress,
+        content: payload.content,
+        type: payload.type,
+        signature: payload.signature,
+        content_hash: payload.contentHash,
+        tx_hash: payload.txHash,
+        challenge_title: payload.challengeTitle,
+        earned_amount: payload.earnedAmount,
+      })
+
+      return {
+        id: post.id,
+        authorAddress: payload.authorAddress,
+        authorUsername: `${payload.authorAddress.slice(0, 6)}...${payload.authorAddress.slice(-4)}`,
+        authorAvatar: "/placeholder.svg",
+        content: payload.content,
+        type: payload.type,
+        signature: payload.signature,
+        contentHash: payload.contentHash,
+        txHash: payload.txHash,
+        challengeTitle: payload.challengeTitle,
+        earnedAmount: payload.earnedAmount,
+        likes: [],
+        comments: [],
+        createdAt: post.created_at,
+      }
     } catch {
       // Optimistic local post when backend is down
       return {
@@ -119,14 +104,29 @@ class ArenaService {
 
   async likePost(postId: string, address: string, signature: string): Promise<void> {
     try {
-      await this.api.post(`/arena/posts/${postId}/like`, { address, signature })
-    } catch { /* optimistic update handled in UI */ }
+      await supabaseArenaService.likePost(postId, address)
+    } catch {
+      // optimistic update handled in UI
+    }
   }
 
   async addComment(postId: string, content: string, authorAddress: string, signature: string): Promise<ArenaComment> {
     try {
-      const res = await this.api.post<ArenaComment>(`/arena/posts/${postId}/comments`, { content, authorAddress, signature })
-      return res.data
+      const comment = await supabaseArenaService.addComment(postId, {
+        author_id: authorAddress,
+        content,
+        signature,
+      })
+
+      return {
+        id: comment.id,
+        authorAddress,
+        authorUsername: `${authorAddress.slice(0, 6)}...${authorAddress.slice(-4)}`,
+        authorAvatar: "/placeholder.svg",
+        content,
+        signature,
+        createdAt: comment.created_at,
+      }
     } catch {
       return {
         id: `local-${Date.now()}`,
@@ -142,8 +142,10 @@ class ArenaService {
 
   async deletePost(postId: string, address: string, signature: string): Promise<void> {
     try {
-      await this.api.delete(`/arena/posts/${postId}`, { data: { address, signature } })
-    } catch { /* silent */ }
+      await supabaseArenaService.deletePost(postId)
+    } catch {
+      // silent
+    }
   }
 }
 

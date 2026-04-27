@@ -2,6 +2,8 @@
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { useWallet } from "@/hooks/use-wallet"
 import { motion } from "framer-motion"
 import { Loader2 } from "lucide-react"
@@ -36,56 +38,119 @@ const wallets = [
 export function WalletConnectModal({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { connect } = useWallet()
   const [connecting, setConnecting] = useState<string | null>(null)
+  const [step, setStep] = useState<"wallet" | "username">("wallet")
+  const [username, setUsername] = useState("")
+  const [usernameError, setUsernameError] = useState("")
 
   const handleConnect = async (walletId: string) => {
     setConnecting(walletId)
     try {
       await connect(walletId)
-      onOpenChange(false)
+      setStep("username")
     } finally {
       setConnecting(null)
     }
   }
 
+  const handleUsernameSubmit = () => {
+    if (!username.trim()) {
+      setUsernameError("Username is required")
+      return
+    }
+    if (username.length < 3) {
+      setUsernameError("Username must be at least 3 characters")
+      return
+    }
+    if (username.length > 20) {
+      setUsernameError("Username must be less than 20 characters")
+      return
+    }
+    if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+      setUsernameError("Username can only contain letters, numbers, dashes, and underscores")
+      return
+    }
+    // Store username in localStorage or pass to backend
+    localStorage.setItem("skillmint_username", username)
+    onOpenChange(false)
+    setStep("wallet")
+    setUsername("")
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Connect Wallet</DialogTitle>
-          <DialogDescription>
-            Connect your wallet to access challenges, earn rewards, and build your on-chain skill portfolio on Base.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          {wallets.map((wallet) => (
-            <motion.div key={wallet.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="relative">
+        {step === "wallet" ? (
+          <>
+            <DialogHeader>
+              <DialogTitle>Connect Wallet</DialogTitle>
+              <DialogDescription>
+                Connect your wallet to access challenges, earn rewards, and build your on-chain skill portfolio on Base.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              {wallets.map((wallet) => (
+                <motion.div key={wallet.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="relative">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start p-4 h-auto"
+                    onClick={() => handleConnect(wallet.id)}
+                    disabled={connecting !== null}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
+                        <wallet.Icon />
+                      </div>
+                      <div className="flex flex-col items-start">
+                        <span className="font-medium">{wallet.name}</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">{wallet.description}</span>
+                      </div>
+                    </div>
+                    {connecting === wallet.id && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-950/80 rounded-md">
+                        <Loader2 className="h-6 w-6 animate-spin text-teal-600 dark:text-teal-400" />
+                      </div>
+                    )}
+                  </Button>
+                </motion.div>
+              ))}
+            </div>
+            <div className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
+              By connecting your wallet, you agree to our Terms of Service and Privacy Policy.
+            </div>
+          </>
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle>Create Your Username</DialogTitle>
+              <DialogDescription>
+                Choose a unique username for your SkillMint profile. You can change it later in your settings.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  placeholder="e.g., web3builder, code_ninja"
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value)
+                    setUsernameError("")
+                  }}
+                  className="transition-all"
+                />
+                {usernameError && <p className="text-sm text-red-500">{usernameError}</p>}
+                <p className="text-xs text-gray-500">3-20 characters. Letters, numbers, dashes, and underscores only.</p>
+              </div>
               <Button
-                variant="outline"
-                className="w-full justify-start p-4 h-auto"
-                onClick={() => handleConnect(wallet.id)}
-                disabled={connecting !== null}
+                className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800"
+                onClick={handleUsernameSubmit}
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
-                    <wallet.Icon />
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <span className="font-medium">{wallet.name}</span>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">{wallet.description}</span>
-                  </div>
-                </div>
-                {connecting === wallet.id && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-950/80 rounded-md">
-                    <Loader2 className="h-6 w-6 animate-spin text-teal-600 dark:text-teal-400" />
-                  </div>
-                )}
+                Continue to Dashboard
               </Button>
-            </motion.div>
-          ))}
-        </div>
-        <div className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
-          By connecting your wallet, you agree to our Terms of Service and Privacy Policy.
-        </div>
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   )

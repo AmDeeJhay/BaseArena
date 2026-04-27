@@ -8,9 +8,12 @@ import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { motion } from "framer-motion"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function SettingsPage() {
+  const [username, setUsername] = useState("")
+  const [usernameError, setUsernameError] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
   const [notificationSettings, setNotificationSettings] = useState({
     email: true,
     browser: true,
@@ -19,6 +22,38 @@ export default function SettingsPage() {
     rewards: true,
     systemUpdates: false,
   })
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("skillmint_username")
+    setUsername(storedUsername || "")
+  }, [])
+
+  const handleUsernameChange = (value: string) => {
+    setUsername(value)
+    setUsernameError("")
+  }
+
+  const handleSaveUsername = () => {
+    if (!username.trim()) {
+      setUsernameError("Username is required")
+      return
+    }
+    if (username.length < 3) {
+      setUsernameError("Username must be at least 3 characters")
+      return
+    }
+    if (username.length > 20) {
+      setUsernameError("Username must be less than 20 characters")
+      return
+    }
+    if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+      setUsernameError("Username can only contain letters, numbers, dashes, and underscores")
+      return
+    }
+    localStorage.setItem("skillmint_username", username)
+    setSuccessMessage("Username updated successfully!")
+    setTimeout(() => setSuccessMessage(""), 3000)
+  }
 
   const handleNotificationChange = (key: string) => {
     setNotificationSettings((prev) => ({
@@ -51,23 +86,22 @@ export default function SettingsPage() {
                   <CardDescription>Update your personal information and public profile.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Full Name</Label>
-                      <Input id="name" defaultValue="John Doe" />
+                  <div className="space-y-2">
+                    <Label htmlFor="username">Username</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="username"
+                        value={username}
+                        onChange={(e) => handleUsernameChange(e.target.value)}
+                        placeholder="Enter your username"
+                      />
+                      <Button onClick={handleSaveUsername} className="bg-teal-600 hover:bg-teal-700">
+                        Save
+                      </Button>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="username">Username</Label>
-                      <Input id="username" defaultValue="johndoe" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" defaultValue="john.doe@example.com" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="location">Location</Label>
-                      <Input id="location" defaultValue="New York, USA" />
-                    </div>
+                    {usernameError && <p className="text-sm text-red-500">{usernameError}</p>}
+                    {successMessage && <p className="text-sm text-green-500">{successMessage}</p>}
+                    <p className="text-xs text-gray-500">3-20 characters. Letters, numbers, dashes, and underscores only.</p>
                   </div>
 
                   <Separator />

@@ -147,9 +147,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         style={{ width: sidebarW }}
       >
         {/* Logo */}
-        <div className={`border-b border-gray-200/50 dark:border-gray-700/50 flex-shrink-0 transition-all duration-200 ${collapsed ? "px-3 py-5" : "px-5 py-6"}`}>
+        <div className={`flex-shrink-0 transition-all duration-200 ${collapsed ? "px-3 py-5" : "px-5 py-6"}`}>
           <Logo collapsed={collapsed} />
         </div>
+
+        {/* Divider - aligned with topbar */}
+        <div className={`h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent ${collapsed ? "mx-1" : "mx-2"}`} />
 
         {/* Nav */}
         <div className={`flex-1 overflow-y-auto scrollbar-none py-4 transition-all duration-200 ${collapsed ? "px-2" : "px-4"}`}>
@@ -173,9 +176,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             ))}
           </div>
 
-          <div className={`my-4 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent ${collapsed ? "mx-1" : "mx-2"}`} />
           {!collapsed && (
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-3">Account</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 mt-4 px-3">Account</p>
           )}
           <div className="space-y-1">
             {accountItems.map(item => (
