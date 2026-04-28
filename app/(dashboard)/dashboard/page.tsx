@@ -127,7 +127,7 @@ export default function DashboardPage() {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
                 {username && username !== "User" ? `Welcome back, ${username}!` : "Dashboard"}
               </h1>
-              <p className="text-gray-600 dark:text-gray-300 text-lg">
+              <p className="text-gray-600 dark:text-gray-300 text-sm wrap">
                 {username && username !== "User" ? "Track your progress, complete challenges, and earn rewards on your skill journey." : "Welcome! Connect your wallet or complete your profile to get started."}
               </p>
             </div>
@@ -255,7 +255,7 @@ export default function DashboardPage() {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="space-y-1">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-medium bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
               Welcome back, {username}!
             </h1>
             <p className="text-gray-600 dark:text-gray-300 text-xs">
